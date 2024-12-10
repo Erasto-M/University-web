@@ -4,6 +4,6 @@ header("Content-Type: application/json");
 
 session_start();
 session_destroy();
-header('Location: http://localhost/student/Frontend/login.html'); // Redirect to login page
+header('Location: http://84.247.174.84/university/student/Frontend/login.html'); // Redirect to login page
 exit();
 ?>

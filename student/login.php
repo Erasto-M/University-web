@@ -46,16 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             switch ($user['userType']) {
                 case 'Student':
-                    $redirectUrl = 'http://localhost/student/Frontend/dashboard.html';
+                    $redirectUrl = 'http://84.247.174.84/university/student/Frontend/dashboard.html';
                     break;
                 case 'Faculty':
-                    $redirectUrl = 'http://localhost/faculty/Frontend/faculty_dashboard.html';
+                    $redirectUrl = 'http://84.247.174.84/university/faculty/Frontend/faculty_dashboard.html';
                     break;
                 case 'Admin':
-                    $redirectUrl = 'http://localhost/admin/Frontend/admin_dashboard.html';
+                    $redirectUrl = 'http://84.247.174.84/university/admin/Frontend/admin_dashboard.html';
                     break;
                 case 'Research':
-                    $redirectUrl = 'http://localhost/research/Frontend/research_dashboard.html';
+                    $redirectUrl = 'http://84.247.174.84/university/research/Frontend/research_dashboard.html';
                     break;
                 default:
                     echo json_encode(['error' => 'Invalid user type']);
