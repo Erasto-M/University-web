@@ -36,16 +36,16 @@ while ($row = $result->fetch_assoc()) {
 if (empty($courses)) {
     sendResponse(404, ['message' => 'No courses found']);
 }
-
+echo json_encode($courses);
 // Return the courses in the response
-sendResponse(200, $courses);
+// sendResponse(200, $courses);
 
-// Function to send JSON responses
-function sendResponse($statusCode, $data) {
-    http_response_code($statusCode);
-    echo json_encode($data);
-    exit();
-}
+// // Function to send JSON responses
+// function sendResponse($statusCode, $data) {
+//     http_response_code($statusCode);
+//     echo json_encode($data);
+//     exit();
+// }
 
 // Update course details (only accessible via POST request with action 'update')
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'update') {
