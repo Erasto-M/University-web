@@ -1,0 +1,258 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #008000;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+header .logo h1 {
+    margin: 0;
+}
+
+header .logo p {
+    margin: 0;
+    font-size: 14px;
+}
+
+nav .btn {
+    background-color: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+main {
+    padding: 20px;
+}
+
+.nav-buttons {
+    margin-bottom: 20px;
+}
+
+.nav-buttons .btn {
+    background-color: #008000;
+    border: none;
+    color: white;
+    padding: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.nav-buttons .btn:hover {
+    background-color: #005500;
+}
+
+.info-section {
+    display: none;
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-section table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.info-section table td strong {
+    color: #008000;
+}
+
+footer {
+    background-color: #008000;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+#advisor-info {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+#advisor-info p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #838181;
+}
+
+#degree-audit-info {
+    margin-top: 15px;
+}
+
+#degree-audit-info p {
+    margin-bottom: 10px;
+}
+
+#missing-courses-list {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+
+/* Dropdown container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown button */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #180808;
+    min-width: 112px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content .btn {
+    display: block;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 10px;
+    width: 100%;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Style for the "View" button */
+.btn {
+    background-color: #28a745; /* Green color */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Style for the program requirements to make it appealing */
+.program-requirements {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa; /* Light background for contrast */
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure the "requirements-list" adjusts dynamically */
+.program-requirements ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.program-requirements ul li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+/* Dropdown button styling */
+.btn-dropdown {
+    background-color: #005a3c; /* Green shade */
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-dropdown:hover {
+    background-color: #00432c; /* Darker green */
+}
+
+/* Arrow indicator for dropdown */
+.btn-dropdown .arrow {
+    font-size: 18px;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.btn-dropdown.active .arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown content styling */
+.dropdown-content {
+    background-color: #f9fbfc;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    padding: 10px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* List items in dropdown */
+.dropdown-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content ul li {
+    padding: 5px 0;
+    font-size: 14px;
+}

@@ -1,0 +1,211 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #004d00;  /* Darker green for a professional feel */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+header .logo h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+header .logo p {
+    margin: 0;
+    font-size: 14px;
+}
+
+nav .btn {
+    background-color: #ffcc00;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+main {
+    padding: 20px;
+}
+
+.nav-buttons {
+    margin-bottom: 20px;
+}
+
+.nav-buttons .btn {
+    background-color: #004d00;
+    border: none;
+    color: white;
+    padding: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.nav-buttons .btn:hover {
+    background-color: #003300;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #180808;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content .btn {
+    display: block;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    color: white;
+    font-size: 16px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.info-section {
+    display: none;
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-section table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.info-section table td strong {
+    color: #004d00;
+}
+
+footer {
+    background-color: #004d00;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+#advisor-info {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+#advisor-info p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #838181;
+}
+
+#degree-audit-info {
+    margin-top: 15px;
+}
+
+#degree-audit-info p {
+    margin-bottom: 10px;
+}
+
+#missing-courses-list {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+#course-roster-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#course-roster-table th,
+#course-roster-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+#course-roster-table th {
+    background-color: #004d00;
+    color: white;
+}
+
+#course-roster-table td {
+    background-color: #f9f9f9;
+}
+
+#course-roster-table td a {
+    text-decoration: none;
+    color: #004d00;
+    font-weight: bold;
+}
+
+#course-roster-table td a:hover {
+    color: #ffcc00;
+}
+
+#attendance-table th, #attendance-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+#attendance-table th {
+    background-color: #004d00;
+    color: white;
+}
+
+#attendance-table td {
+    background-color: #f9f9f9;
+}
+
+#attendance-table td a {
+    text-decoration: none;
+    color: #004d00;
+    font-weight: bold;
+}
+
+#attendance-table td a:hover {
+    color: #ffcc00;
+}

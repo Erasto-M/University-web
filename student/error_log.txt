@@ -1,0 +1,10 @@
+[06-Dec-2024 07:32:27 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 39
+[06-Dec-2024 07:32:27 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 45
+[06-Dec-2024 07:32:54 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 39
+[06-Dec-2024 07:32:54 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 45
+[06-Dec-2024 07:35:58 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 39
+[06-Dec-2024 07:35:58 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 45
+[06-Dec-2024 07:36:14 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 39
+[06-Dec-2024 07:36:14 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 45
+[06-Dec-2024 07:36:26 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 39
+[06-Dec-2024 07:36:26 Europe/Berlin] PHP Warning:  Undefined array key "username" in C:\xampp\htdocs\student\login.php on line 45

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+   
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.jpg" alt="University Logo">
+            <h1>Arthur Morgan University</h1>
+            <p>Better Life Through Technology</p>
+        </div>
+        <nav>
+            <button class="btn">Notice to Students! Lost and Found Student IDs</button>
+            <button class="btn">Notice on Approved Course Transfers</button>
+            <button class="btn">Pay fees via eCitizen</button>
+            <button class="btn logout-btn" onclick="logout()">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Navigation Section for Other Pages -->
+        <div class="nav-buttons">
+            <button class="btn" onclick="showPage('basic-info')">About</button>
+            <button class="btn" onclick="showPage('student-console')">Student Console</button>
+            <button class="btn" onclick="showPage('grades')">Academics Page</button>
+            <button class="btn" onclick="showPage('advisor-info')">View the Advisement Page</button>
+
+            <!-- Course Catalog with Programs inside -->
+            <div class="dropdown">
+                <button class="btn dropdown-toggle">Course Catalog</button>
+                <div class="dropdown-content">
+                    <button class="btn" onclick="showPage('majors-minors')">Programs</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="major-minor-requirements" class="info-section" style="display:none;">
+            <h3>Program Requirements</h3>
+            <ul id="requirements-list">
+                <!-- Requirements will be dynamically loaded here -->
+            </ul>
+        </div>
+
+        <!-- Student Console Section -->
+        <section id="student-console" class="info-section">
+            <h3>Student Console</h3>
+            <button class="btn" onclick="showPage('registration')">Registration</button>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="registration" class="info-section">
+            <h3>Registration</h3>
+            <button class="btn" onclick="showPage('schedule')">View Semester Schedule</button>
+            <button class="btn" onclick="showPage('holds')">View Holds</button>
+            <button class="btn" onclick="showPage('degree-audit')">View Degree Audit</button>
+            <button class="btn" onclick="showPage('view-registered-courses')">View Registered Course Sections</button>
+        </section>
+
+        <!-- Registered Course Sections Section -->
+        <section id="view-registered-courses" class="info-section" style="display: none;">
+            <h3>Registered Course Sections</h3>
+            <table id="registered-courses-table">
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Credits</th>
+                    </tr>
+                </thead>
+                <tbody id="registered-courses-info">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Degree Audit Section -->
+        <section id="degree-audit" class="info-section" style="display: none;">
+            <h3>Degree Audit</h3>
+            <div id="degree-audit-info">
+                <p><strong>Status:</strong> <span id="audit-status"></span></p>
+                <p><strong>Missing Courses:</strong></p>
+                <ul id="missing-courses-list"></ul>
+            </div>
+        </section>
+
+        <!-- Academics Section -->
+        <section id="grades" class="info-section" style="display: none;">
+            <h3>Academics Page</h3>
+            <button class="btn" onclick="showPage('semester-grades')">View Semester Grades</button>
+            <button class="btn" onclick="showPage('unofficial-transcript')">View Unofficial Transcript</button>
+        </section>
+
+        <!-- Unofficial Transcript Section -->
+        <section id="unofficial-transcript" class="info-section" style="display: none;">
+            <h3>Unofficial Transcript</h3>
+            <table id="transcript-table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Grade</th>
+                        <th>Semester</th>
+                    </tr>
+                </thead>
+                <tbody id="transcript-info">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Semester Grades Section -->
+        <section id="semester-grades" class="info-section" style="display: none;">
+            <h3>Your Semester Grades</h3>
+            <table id="grades-table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="grades-info">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Basic Information Section -->
+        <section id="basic-info" class="info-section">
+            <table>
+                <tr>
+                    <td><strong>Registration Number</strong></td>
+                    <td id="reg-number"></td>
+                </tr>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td id="name"></td>
+                </tr>
+                <tr>
+                    <td><strong>Student Email</strong></td>
+                    <td id="email"></td>
+                </tr>
+                <tr>
+                    <td><strong>National ID Number</strong></td>
+                    <td id="id-number"></td>
+                </tr>
+                <tr>
+                    <td><strong>Gender</strong></td>
+                    <td id="gender"></td>
+                </tr>
+                <tr>
+                    <td><strong>Date of Birth</strong></td>
+                    <td id="dob"></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Holds Section -->
+        <section id="holds" class="info-section">
+            <h3>Holds</h3>
+            <table id="holds-table">
+                <thead>
+                    <tr>
+                        <th>Hold Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="holds-info">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Schedule Section -->
+        <section id="schedule" class="info-section">
+            <h3>Your Semester Schedule</h3>
+            <table id="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Section</th>
+                        <th>Semester</th>
+                        <th>Faculty Name</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-info">
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Advisement Page Section -->
+        <section id="advisor-info" class="info-section" style="display: none;">
+            <div id="advisor-info">
+                <h3>Your Advisor</h3>
+                <table>
+                    <tr>
+                        <td>Advisor Name:</td>
+                        <td id="advisor-name"></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td id="advisor-email"></td>
+                    </tr>
+                    
+                </table>
+            </di
+                v>
+            
+        </section>
+
+        <!-- Programs (Majors/Minors) Section -->
+        <section id="majors-minors" class="info-section" style="display: none;">
+            <h3>Available Majors and Minors</h3>
+            <div>
+                <h3>Majors</h3>
+                <ul id="majors-list">
+                    <!-- Major items will include a "View" button -->
+                </ul>
+            </div>
+            <div>
+                <h3>Minors</h3>
+                <ul id="minors-list">
+                    <!-- Minor items will include a "View" button -->
+                </ul>
+            </div>
+            <div>
+                <h3>Course Requirements</h3>
+                <ul id="requirements-list">
+                    <!-- Requirements will be dynamically loaded here -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Add Courses Section -->
+        <section id="courses" class="info-section" style="display: none;">
+            <h3>Available Courses</h3>
+            <ul id="courses-list">
+                <!-- Course items will include a "View" button -->
+            </ul>
+        </section>
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Arthur Morgan University. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // JavaScript function for logout
+        function logout() {
+            window.location.href = 'http://localhost/student/logout.php';
+        }
+    </script>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
