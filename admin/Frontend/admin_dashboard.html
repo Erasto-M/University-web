@@ -20,6 +20,7 @@
             <button class="btn" onclick="showPage('account-section')">Account</button>
             <button class="btn" onclick="showPage('view-courses')">View Course Catalog</button>
             <button class="btn" onclick="showPage('create-course')">Create Course Section</button>
+            <button class="btn logout-btn" onclick="logout()">Logout</button>
         </nav>
     </header>
 
@@ -361,7 +362,14 @@
     <footer>
         <p>&copy; 2024 University Admin System</p>
     </footer>
-
+    <script>
+        // JavaScript function for logout
+        function logout() {
+            window.location.href = 'http://84.247.174.84/university/student/logout.php';
+        }
+    </script>
     <script src="admin_dashboard.js"></script>
+   
+
 </body>
 </html>
