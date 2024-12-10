@@ -32,7 +32,7 @@ function showPage(pageId) {
 
 // Function to fetch faculty personal information
 function fetchFacultyInfo() {
-    fetch('login.php')  // Adjusting for login.php based on logic
+    fetch('http://84.247.174.84/university/student/login.php')  // Adjusting for login.php based on logic
         .then(response => response.json())
         .then(data => {
             document.getElementById('faculty-name').innerText = data.name;
@@ -48,7 +48,7 @@ function fetchFacultyInfo() {
 
 // Function to fetch course roster for the faculty
 function fetchCourseRoster() {
-    fetch('view_course_roster.php') // Adjusted for view_course_roster.php
+    fetch('http://84.247.174.84/university/faculty/view_course_roster.php') // Adjusted for view_course_roster.php
         .then(response => response.json())
         .then(data => {
             const rosterTableBody = document.getElementById('course-roster-info');
@@ -106,7 +106,7 @@ function fetchAttendance() {
 
 // Function to fetch grade assignment data
 function fetchAssignGrades() {
-    fetch('assign_grades.php') // Adjusted for assign_grades.php
+    fetch('http://84.247.174.84/university/faculty/assign_grades.php') // Adjusted for assign_grades.php
         .then(response => response.json())
         .then(data => {
             const gradebookTableBody = document.getElementById('assign-grades-info');
@@ -135,7 +135,7 @@ function fetchAssignGrades() {
 
 // Function to fetch and display the master schedule
 function fetchMasterSchedule() {
-    fetch('view_master_schedule.php')  // Adjusted for view_master_schedule.php
+    fetch('http://84.247.174.84/university/faculty/view_master_schedule.php')  // Adjusted for view_master_schedule.php
         .then(response => response.json())
         .then(data => {
             const scheduleTableBody = document.getElementById('master-schedule-info');
@@ -165,7 +165,7 @@ function fetchMasterSchedule() {
 
 // Function to fetch degree audit data
 function fetchDegreeAudit() {
-    fetch('view_degree_audit.php')  // Adjusted for view_degree_audit.php
+    fetch('http://84.247.174.84/university/faculty/view_degree_audit.php')  // Adjusted for view_degree_audit.php
         .then(response => response.json())
         .then(data => {
             document.getElementById('degree-audit-status').innerText = data.status;
@@ -187,7 +187,7 @@ function fetchDegreeAudit() {
 
 // Function to fetch and display faculty update information
 function fetchFacultyUpdateInfo() {
-    fetch('update_faculty_info.php')  // Adjusted for update_faculty_info.php
+    fetch('http://84.247.174.84/university/faculty/update_faculty_info.php')  // Adjusted for update_faculty_info.php
         .then(response => response.json())
         .then(data => {
             document.getElementById('faculty-update-name').value = data.name;

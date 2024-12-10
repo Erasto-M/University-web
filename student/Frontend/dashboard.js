@@ -35,7 +35,7 @@ function showPage(pageId) {
 }
 
 function fetchAdvisorInfo() {
-    fetch('http://localhost/student/get_student_advisor.php')
+    fetch('http://84.247.174.84/university/student/get_student_advisor.php')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load advisor information.');
@@ -64,7 +64,7 @@ function hideAdvisorInfo() {
 
 // Fetch student details
 function fetchStudentInfo() {
-    fetch('http://localhost/student/get_student_info.php')
+    fetch('http://84.247.174.84/university/student/get_student_info.php')
         .then(response => response.json())
         .then(data => {
             document.getElementById('reg-number').innerText = data.registrationNumber;
@@ -79,7 +79,7 @@ function fetchStudentInfo() {
 
 // Fetch holds data and display in table format
 function fetchHolds() {
-    fetch('http://localhost/student/get_holds.php')
+    fetch('http://84.247.174.84/university/student/get_holds.php')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -112,7 +112,7 @@ function fetchHolds() {
 
 
 function fetchSchedule() {
-    fetch('http://localhost/student/get_student_schedule.php')
+    fetch('http://84.247.174.84/university/student/get_student_schedule.php')
         .then(response => response.json())
         .then(data => {
             const scheduleTbody = document.getElementById('schedule-info');
@@ -144,7 +144,7 @@ function fetchSchedule() {
 
 
 function fetchGrades() {
-    fetch('http://localhost/student/get_student_grades.php')
+    fetch('http://84.247.174.84/university/student/get_student_grades.php')
         .then(response => response.json())
         .then(data => {
             const gradesTbody = document.getElementById('grades-info'); // Ensure the table body has the correct ID
@@ -174,7 +174,7 @@ function fetchGrades() {
 
 // Function to fetch degree audit info from the backend
 function fetchDegreeAudit() {
-    fetch('http://localhost/student/get_degree_audit.php')
+    fetch('http://84.247.174.84/university/student/get_degree_audit.php')
         .then(response => response.json())
         .then(degreeAudit => {
             const statusElement = document.getElementById('audit-status');
@@ -212,7 +212,7 @@ function fetchDegreeAudit() {
 
 // Function to fetch unofficial transcript info from the backend
 function fetchTranscript() {
-    fetch('http://localhost/student/get_transcript.php')
+    fetch('http://84.247.174.84/university/student/get_transcript.php')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load transcript data.');
@@ -247,7 +247,7 @@ function fetchTranscript() {
 
 
     function fetchRegisteredCourses() {
-        fetch('http://localhost/student/get_registered_courses.php')
+        fetch('http://84.247.174.84/university/student/get_registered_courses.php')
             .then(response => response.json())
             .then(data => {
                 const registeredCoursesTbody = document.getElementById('registered-courses-info');
@@ -276,7 +276,7 @@ function fetchTranscript() {
     
 
     function fetchMajorsAndMinors() {
-        fetch("http://localhost/student/get_available_majors_minors.php")
+        fetch("http://84.247.174.84/university/student/get_available_majors_minors.php")
             .then(response => response.json())
             .then(data => {
                 const majorsList = document.getElementById("majors-list");
@@ -349,7 +349,7 @@ function fetchTranscript() {
     
     // Fetch and display the requirements for a specific major or minor
     function fetchProgramRequirements(courseID) {
-        fetch(`http://localhost/student/get_course_requirements.php?courseID=${courseID}`)
+        fetch(`http://84.247.174.84/university/student/get_course_requirements.php?courseID=${courseID}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -383,7 +383,7 @@ function fetchTranscript() {
     
 
     function fetchCourses() {
-        fetch("http://localhost/student/get_available_courses.php")
+        fetch("http://84.247.174.84/university/student/get_available_courses.php")
             .then(response => response.json())
             .then(data => {
                 const coursesList = document.getElementById("courses-list");
@@ -408,7 +408,7 @@ function fetchTranscript() {
     }
     
     function fetchCoursePrerequisites(courseID) {
-        fetch(`http://localhost/student/get_course_prerequisites.php?courseID=${courseID}`)
+        fetch(`http://84.247.174.84/university/student/get_course_prerequisites.php?courseID=${courseID}`)
             .then(response => response.json())
             .then(data => {
                 const requirementsList = document.getElementById("requirements-list");
@@ -430,7 +430,7 @@ function fetchTranscript() {
     }
 
     function fetchProgramRequirementsForDropdown(courseID, dropdownContent) {
-        fetch(`http://localhost/student/get_course_requirements.php?courseID=${courseID}`)
+        fetch(`http://84.247.174.84/university/student/get_course_requirements.php?courseID=${courseID}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);

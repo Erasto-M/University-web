@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Ensure body content is wrapped as a string
-            const response = await fetch("../login.php", {
+            const response = await fetch("http://84.247.174.84/university/student/login.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",

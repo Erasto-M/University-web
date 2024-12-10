@@ -11,7 +11,7 @@ function showPage(pageId) {
 
 // Fetch and display the courses
 function fetchCourses() {
-    fetch('http://localhost/admin/course_catalog.php')
+    fetch('http://84.247.174.84/university/admin/course_catalog.php')
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('courseTableBody');
@@ -35,7 +35,7 @@ function fetchCourses() {
 
 // Show the course data in the form for editing
 function editCourse(courseID) {
-    fetch(`http://localhost/admin/course_catalog.php?action=update&courseID=${courseID}`)
+    fetch(`http://84.247.174.84/university/admin/course_catalog.php?action=update&courseID=${courseID}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('updateCourseID').value = data.courseID;
@@ -56,7 +56,7 @@ document.getElementById('updateCourseForm').addEventListener('submit', (e) => {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/course_catalog.php?action=update', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ document.getElementById('createCourseForm').addEventListener('submit', (e) => {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/course_catalog.php?action=create', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ document.getElementById('createCourseForm').addEventListener('submit', (e) => {
 
 // Fetch and display the Master Schedule
 function fetchMasterSchedule() {
-    fetch('http://localhost/admin/master_schedule.php')  // Correct endpoint for fetching course sections
+    fetch('http://84.247.174.84/university/admin/master_schedule.php')  // Correct endpoint for fetching course sections
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('masterScheduleTableBody');
@@ -128,7 +128,7 @@ function deleteCourseSection(crnNo) {
     if (confirmDelete) {
         const data = { crnNo: crnNo };
 
-        fetch('http://localhost/admin/delete_course_section.php?action=delete', {
+        fetch('http://84.247.174.84/university/admin/delete_course_section.php?action=delete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

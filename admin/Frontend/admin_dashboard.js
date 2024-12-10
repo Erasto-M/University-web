@@ -12,7 +12,7 @@ function showPage(pageId) {
 
 // Fetch and display the Profile for the logged-in user
 function fetchProfile() {
-    fetch('http://localhost/admin/profile.php')  // Correct endpoint for fetching profile
+    fetch('http://84.247.174.84/university/admin/profile.php')  // Correct endpoint for fetching profile
         .then(response => response.json())
         .then(data => {
             if (data.message) {
@@ -32,7 +32,7 @@ function fetchProfile() {
 
 // Show the edit profile form with pre-filled data
 function showEditProfileForm() {
-    fetch('http://localhost/admin/profile.php')
+    fetch('http://84.247.174.84/university/admin/profile.php')
         .then(response => response.json())
         .then(data => {
             // Prefill the edit form with existing profile data
@@ -61,7 +61,7 @@ document.getElementById('editProfileForm').addEventListener('submit', (e) => {
     console.log('Form Data:', formData);
 
     // Send POST request to update the profile
-    fetch('http://localhost/admin/profile.php?action=update', {
+    fetch('http://84.247.174.84/university/admin/profile.php?action=update', {
         method: 'POST',
         body: formData,  // Directly sending the FormData
     })
@@ -101,7 +101,7 @@ function showPage(pageId) {
 
 // Fetch and display the courses
 function fetchCourses() {
-    fetch('http://localhost/admin/course_catalog.php')
+    fetch('http://84.247.174.84/university/admin/course_catalog.php')
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('courseTableBody');
@@ -125,7 +125,7 @@ function fetchCourses() {
 
 // Show the course data in the form for editing
 function editCourse(courseID) {
-    fetch(`http://localhost/admin/course_catalog.php?action=update&courseID=${courseID}`)
+    fetch(`http://84.247.174.84/university/admin/course_catalog.php?action=update&courseID=${courseID}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('updateCourseID').value = data.courseID;
@@ -148,7 +148,7 @@ document.getElementById('updateCourseForm').addEventListener('submit', (e) => {
 
     console.log('Sending update data:', data); // Log the data to check
 
-    fetch('http://localhost/admin/course_catalog.php?action=update', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json', // Ensure content type is application/json
@@ -180,7 +180,7 @@ document.getElementById('createCourseForm').addEventListener('submit', (e) => {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/course_catalog.php?action=create', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ document.getElementById('createCourseForm').addEventListener('submit', (e) => {
 
 // Fetch and display the Master Schedule
 function fetchMasterSchedule() {
-    fetch('http://localhost/admin/master_schedule.php')
+    fetch('http://84.247.174.84/university/admin/master_schedule.php')
         .then(response => response.json())
         .then(data => {
             showPage('view-master-schedule');
@@ -234,7 +234,7 @@ document.getElementById('createMasterScheduleForm').addEventListener('submit', (
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/master_schedule.php', {
+    fetch('http://84.247.174.84/university/admin/master_schedule.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ document.getElementById('updateMasterScheduleForm').addEventListener('submit', (
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/master_schedule.php?action=update', {
+    fetch('http://84.247.174.84/university/admin/master_schedule.php?action=update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ function deleteCourseSection(crnNo) {
     if (confirmDelete) {
         const data = { crnNo: crnNo };
 
-        fetch('http://localhost/admin/delete_course_section.php?action=delete', {
+        fetch('http://84.247.174.84/university/admin/delete_course_section.php?action=delete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -348,7 +348,7 @@ document.getElementById('updatePasswordForm').addEventListener('submit', (e) => 
     };
 
     // Send POST request to update the password
-    fetch('http://localhost/admin/update_password.php', {
+    fetch('http://84.247.174.84/university/admin/update_password.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'  // Ensure JSON is set as content type
@@ -394,7 +394,7 @@ function searchCourseCatalog() {
     const formData = new FormData(document.getElementById('searchForm'));
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/course_catalog.php?action=search', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=search', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -417,7 +417,7 @@ function searchByDepartment() {
     const formData = new FormData(document.getElementById('departmentForm'));
     const data = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost/admin/course_catalog.php?action=searchByDepartment', {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php?action=searchByDepartment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -467,7 +467,7 @@ document.getElementById('departmentForm').addEventListener('submit', (e) => {
 
 // Fetch and display departments (for the department search dropdown)
 function fetchDepartments() {
-    fetch('http://localhost/admin/get_departments.php')
+    fetch('http://84.247.174.84/university/admin/get_departments.php')
     .then(response => response.json())
     .then(data => {
         const departmentSelect = document.getElementById('department');
