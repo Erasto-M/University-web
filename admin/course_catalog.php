@@ -3,13 +3,13 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
 include 'config.php';
-session_start();
+// session_start();
 
-// Debug session to ensure user is logged in
-if (!isset($_SESSION['userId'])) {
-    error_log("Unauthorized access attempt");
-    sendResponse(401, ['message' => 'Unauthorized access. Please log in.']);
-}
+// // Debug session to ensure user is logged in
+// if (!isset($_SESSION['userId'])) {
+//     error_log("Unauthorized access attempt");
+//     sendResponse(401, ['message' => 'Unauthorized access. Please log in.']);
+// }
 
 // SQL query to fetch courses and their associated department names
 $sql = "SELECT c.courseID, c.courseName, c.numOfCredits, c.courseLevel, c.description, d.deptName 
