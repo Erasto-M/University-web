@@ -1,37 +1,60 @@
 <?php
-header("Access-Control-Allow-Origin: *");  // Allow all origins, or specify your React app's URL
+header("Access-Control-Allow-Origin: *");  // Allow all origins, or specify your app's URL
 header("Content-Type: application/json");  // Ensure the response is in JSON format
 
 session_start();  // Start the session to access session variables
 
 include 'db_connection.php';  // Include your database connection file
 
-// Check if user is logged in and is a faculty member
-if (!isset($_SESSION['userId']) || !isset($_SESSION['facultyFirstName']) || !isset($_SESSION['facultyLastName'])) {
-    // Redirect to login page if not logged in
-    header('Location: ./login.html');
-    exit();
+try {
+    // Query to fetch all advisors with details from AppUser and Faculty tables
+    $sql = "
+        SELECT 
+            a.facultyID AS advisorFacultyID,
+            au.userID AS userID,
+            au.firstName AS firstName,
+            au.lastName AS lastName,
+            au.email AS email,
+            f.specialty AS specialty,
+            f.rank AS rank,
+            f.facultyType AS facultyType
+        FROM Advisor a
+        JOIN Faculty f ON a.facultyID = f.facultyID
+        JOIN AppUser au ON f.facultyID = au.userID
+        ORDER BY au.lastName, au.firstName";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if there are any advisors
+    $advisors = [];
+    while ($row = $result->fetch_assoc()) {
+        $advisors[] = [
+            'facultyID' => $row['advisorFacultyID'],
+            'userID' => $row['userID'],
+            'firstName' => $row['firstName'],
+            'lastName' => $row['lastName'],
+            'email' => $row['email'],
+            'specialty' => $row['specialty'],
+            'rank' => $row['rank'],
+            'facultyType' => $row['facultyType']
+        ];
+    }
+
+    // Return advisors data in JSON format
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'All advisors fetched successfully.',
+        'data' => $advisors
+    ]);
+} catch (Exception $e) {
+    // Handle errors and return an error message
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Error fetching advisors: ' . $e->getMessage()
+    ]);
 }
 
-// Query to fetch all advisors and their associated faculties
-$sql = "SELECT f.FacultyId, f.FirstName AS FacultyFirstName, f.LastName AS FacultyLastName, a.AdvisorId
-        FROM Faculty f
-        JOIN Advisor a ON f.FacultyId = a.FacultyId";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Check if there are any advisors
-$advisors = [];
-while ($row = $result->fetch_assoc()) {
-    $advisors[] = $row;  // Store each advisor in an array
-}
-
-// Return advisors data in JSON format
-echo json_encode([
-    'status' => 'success',
-    'message' => 'Advisors fetched successfully.',
-    'data' => $advisors
-]);
 exit();
 ?>

@@ -12,18 +12,40 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
-$query = "SELECT mr.courseID, c.courseName, mr.minimumGradeRequired, 
-                 CASE 
-                     WHEN sh.grade IS NOT NULL THEN sh.grade 
-                     ELSE 'Not Completed' 
-                 END AS status
-          FROM MajorRequirements mr
-          INNER JOIN Course c ON mr.courseID = c.courseID
-          LEFT JOIN StudentHistory sh ON mr.courseID = sh.courseID AND sh.studentID = ?
-          INNER JOIN StudentMajor sm ON mr.majorID = sm.majorID
-          WHERE sm.studentID = ?";
+// Query for Degree Audit including detailed information
+$query = "
+    SELECT 
+        c.courseID,
+        c.courseName,
+        CASE
+            WHEN mr.majorID IS NOT NULL THEN 'Major'
+            WHEN mnr.minorID IS NOT NULL THEN 'Minor'
+        END AS courseType,
+        mr.minimumGradeRequired AS majorGradeRequired,
+        mnr.minimumGradeRequired AS minorGradeRequired,
+        sh.grade AS earnedGrade,
+        sh.semesterID,
+        sem.semesterName,
+        sem.semesterYear,
+        cs.crnNo,
+        CONCAT(f.firstName, ' ', f.lastName) AS professorName,
+        CASE
+            WHEN sh.grade IS NULL THEN 'In Progress'
+            WHEN sh.grade < mr.minimumGradeRequired THEN 'Retaken'
+            ELSE 'Completed'
+        END AS courseStatus
+    FROM Course c
+    LEFT JOIN MajorRequirements mr ON c.courseID = mr.courseID
+    LEFT JOIN MinorRequirements mnr ON c.courseID = mnr.courseID
+    LEFT JOIN StudentHistory sh ON c.courseID = sh.courseID AND sh.studentID = ?
+    LEFT JOIN Semester sem ON sh.semesterID = sem.semesterID
+    LEFT JOIN CourseSection cs ON c.courseID = cs.courseID
+    LEFT JOIN AppUser f ON cs.facultyID = f.userID
+    WHERE (mr.majorID IN (SELECT majorID FROM StudentMajor WHERE studentID = ?) OR
+           mnr.minorID IN (SELECT minorID FROM StudentMinor WHERE studentID = ?))
+";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("ii", $userId, $userId);
+$stmt->bind_param("iii", $userId, $userId, $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 

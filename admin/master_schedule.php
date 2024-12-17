@@ -1,13 +1,13 @@
 <?php
 
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+header ("Content-Type: application/json");
 
 // Include database connection
 include 'config.php';
 
 // Get the request method
-$requestMethod = $_SERVER['REQUEST_METHOD'];
+$requestMethod = $_SERVER ['REQUEST_METHOD'];
 
 switch ($requestMethod) {
     case 'POST':
@@ -68,12 +68,33 @@ function readCourseSections() {
     global $conn;
     
 
-    $sql = "SELECT cs.crnNo, c.courseName, cs.sectionNo, au.firstName, au.lastName, cs.timeSlot, r.roomNo, cs.availableSeats, s.semesterName 
-            FROM CourseSection cs
-            JOIN Course c ON cs.courseID = c.courseID
-            JOIN AppUser au ON cs.facultyID = au.userID
-            JOIN Room r ON cs.roomID = r.roomID
-            JOIN Semester s ON cs.semesterID = s.semesterID";
+    $sql = "
+    SELECT 
+    cs.crnNo, 
+    c.courseName, 
+    cs.sectionNo, 
+    r.roomNo, 
+    b.buildingName, 
+    u.firstName, 
+    u.lastName, 
+    cs.availableSeats, 
+    s.semesterName,
+    COALESCE(GROUP_CONCAT(d.weekDay ORDER BY d.dayID), 'N/A') AS days,
+    COALESCE(p.startTime, 'N/A') AS startTime,
+    COALESCE(p.endTime, 'N/A') AS endTime
+FROM CourseSection cs
+JOIN Course c ON cs.courseID = c.courseID
+LEFT JOIN Room r ON cs.roomID = r.roomID
+LEFT JOIN Building b ON r.buildingID = b.buildingID
+LEFT JOIN AppUser u ON cs.facultyID = u.userID
+LEFT JOIN Semester s ON cs.semesterID = s.semesterID
+LEFT JOIN TimeSlot ts ON cs.timeSlot = ts.timeSlotID
+LEFT JOIN TimeSlotDay tsd ON ts.timeSlotID = tsd.timeSlotID
+LEFT JOIN Day d ON tsd.dayID = d.dayID
+LEFT JOIN Period p ON ts.periods = p.periodID
+GROUP BY cs.crnNo;
+
+";
     
     $result = $conn->query($sql);
     

@@ -54,12 +54,19 @@
 
         <!-- Registration Section -->
         <section id="registration" class="info-section">
-            <h3>Registration</h3>
-            <button class="btn" onclick="showPage('schedule')">View Semester Schedule</button>
-            <button class="btn" onclick="showPage('holds')">View Holds</button>
-            <button class="btn" onclick="showPage('degree-audit')">View Degree Audit</button>
-            <button class="btn" onclick="showPage('view-registered-courses')">View Registered Course Sections</button>
-        </section>
+    <h3>Registration</h3>
+    <button class="btn" onclick="redirectToCourseCatalog()">Master Schedule</button>
+    <button class="btn" onclick="showPage('schedule')">View Semester Schedule</button>
+    <button class="btn" onclick="showPage('holds')">View Holds</button>
+    <button class="btn" onclick="showPage('degree-audit')">View Degree Audit</button>
+    <button class="btn" onclick="showPage('view-registered-courses')">View Registered Course Sections</button>
+    <div id="contentArea" class="info-section">
+        <!-- Content will load here dynamically -->
+    </div>
+</section>
+
+        
+        
 
         <!-- Registered Course Sections Section -->
         <section id="view-registered-courses" class="info-section" style="display: none;">
@@ -82,11 +89,41 @@
             <h3>Degree Audit</h3>
             <div id="degree-audit-info">
                 <p><strong>Status:</strong> <span id="audit-status"></span></p>
-                <p><strong>Missing Courses:</strong></p>
-                <ul id="missing-courses-list"></ul>
+        
+                <h4>Major Courses</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course Name</th>
+                            <th>Semester</th>
+                            <th>Year</th>
+                            <th>Professor</th>
+                            <th>CRN</th>
+                            <th>Status</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="major-courses-list"></tbody>
+                </table>
+        
+                <h4>Minor Courses</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course Name</th>
+                            <th>Semester</th>
+                            <th>Year</th>
+                            <th>Professor</th>
+                            <th>CRN</th>
+                            <th>Status</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="minor-courses-list"></tbody>
+                </table>
             </div>
         </section>
-
+        
         <!-- Academics Section -->
         <section id="grades" class="info-section" style="display: none;">
             <h3>Academics Page</h3>
@@ -127,33 +164,91 @@
 
         <!-- Basic Information Section -->
         <section id="basic-info" class="info-section">
+            <p class="table-title">Personal Information</p>
             <table>
                 <tr>
-                    <td><strong>Registration Number</strong></td>
-                    <td id="reg-number"></td>
+                    <td><strong>Student ID</strong></td>
+                    <td id="reg-number">1</td>
                 </tr>
                 <tr>
                     <td><strong>Name</strong></td>
-                    <td id="name"></td>
+                    <td id="name" data-original-value="Alice Smith">Alice Smith</td>
+                    <td>
+                        <button class="btn" id="name-edit" onclick="enableEdit('name')">Edit</button>
+                        <button class="btn" id="name-save" onclick="saveEdit('name')" style="display:none;">Save</button>
+                        <button class="btn" id="name-cancel" onclick="cancelEdit('name')" style="display:none;">Cancel</button>
+                    </td>
                 </tr>
                 <tr>
                     <td><strong>Student Email</strong></td>
-                    <td id="email"></td>
-                </tr>
-                <tr>
-                    <td><strong>National ID Number</strong></td>
-                    <td id="id-number"></td>
+                    <td id="email" data-original-value="alice.smith.1@student.com">alice.smith.1@student.com</td>
+                    <td>
+                        <button class="btn" id="email-edit" onclick="enableEdit('email')">Edit</button>
+                        <button class="btn" id="email-save" onclick="saveEdit('email')" style="display:none;">Save</button>
+                        <button class="btn" id="email-cancel" onclick="cancelEdit('email')" style="display:none;">Cancel</button>
+                    </td>
                 </tr>
                 <tr>
                     <td><strong>Gender</strong></td>
-                    <td id="gender"></td>
+                    <td id="gender" data-original-value="F">F</td>
+                    <td>
+                        <button class="btn" id="gender-edit" onclick="enableEdit('gender')">Edit</button>
+                        <button class="btn" id="gender-save" onclick="saveEdit('gender')" style="display:none;">Save</button>
+                        <button class="btn" id="gender-cancel" onclick="cancelEdit('gender')" style="display:none;">Cancel</button>
+                    </td>
                 </tr>
                 <tr>
                     <td><strong>Date of Birth</strong></td>
-                    <td id="dob"></td>
+                    <td id="dob" data-original-value="1998-03-15">1998-03-15</td>
+                    <td>
+                        <button class="btn" id="dob-edit" onclick="enableEdit('dob')">Edit</button>
+                        <button class="btn" id="dob-save" onclick="saveEdit('dob')" style="display:none;">Save</button>
+                        <button class="btn" id="dob-cancel" onclick="cancelEdit('dob')" style="display:none;">Cancel</button>
+                    </td>
+                </tr>
+            </table>
+            <p class="table-title">Home Address</p>
+            <table>
+                <tr>
+                    <td><strong>Address</strong></td>
+                    <td id="address" data-original-value="12A">12A</td>
+                    <td>
+                        <button class="btn" id="address-edit" onclick="enableEdit('address')">Edit</button>
+                        <button class="btn" id="address-save" onclick="saveEdit('address')" style="display:none;">Save</button>
+                        <button class="btn" id="address-cancel" onclick="cancelEdit('address')" style="display:none;">Cancel</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Zip Code</strong></td>
+                    <td id="zipcode" data-original-value="10001">10001</td>
+                    <td>
+                        <button class="btn" id="zipcode-edit" onclick="enableEdit('zipcode')">Edit</button>
+                        <button class="btn" id="zipcode-save" onclick="saveEdit('zipcode')" style="display:none;">Save</button>
+                        <button class="btn" id="zipcode-cancel" onclick="cancelEdit('zipcode')" style="display:none;">Cancel</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Street</strong></td>
+                    <td id="streetName" data-original-value="Oak Street">Oak Street</td>
+                    <td>
+                        <button class="btn" id="streetName-edit" onclick="enableEdit('streetName')">Edit</button>
+                        <button class="btn" id="streetName-save" onclick="saveEdit('streetName')" style="display:none;">Save</button>
+                        <button class="btn" id="streetName-cancel" onclick="cancelEdit('streetName')" style="display:none;">Cancel</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>City</strong></td>
+                    <td id="city" data-original-value="Metropolis">Metropolis</td>
+                    <td>
+                        <button class="btn" id="city-edit" onclick="enableEdit('city')">Edit</button>
+                        <button class="btn" id="city-save" onclick="saveEdit('city')" style="display:none;">Save</button>
+                        <button class="btn" id="city-cancel" onclick="cancelEdit('city')" style="display:none;">Cancel</button>
+                    </td>
                 </tr>
             </table>
         </section>
+        
+        
 
         <!-- Holds Section -->
         <section id="holds" class="info-section">
@@ -202,8 +297,7 @@
                     </tr>
                     
                 </table>
-            </di
-                v>
+            </div>
             
         </section>
 
@@ -212,29 +306,21 @@
             <h3>Available Majors and Minors</h3>
             <div>
                 <h3>Majors</h3>
-                <ul id="majors-list">
-                    <!-- Major items will include a "View" button -->
+                <ul id="majors-list">                   
                 </ul>
             </div>
             <div>
                 <h3>Minors</h3>
                 <ul id="minors-list">
-                    <!-- Minor items will include a "View" button -->
                 </ul>
             </div>
-            <div>
-                <h3>Course Requirements</h3>
-                <ul id="requirements-list">
-                    <!-- Requirements will be dynamically loaded here -->
-                </ul>
-            </div>
+            
         </section>
 
         <!-- Add Courses Section -->
         <section id="courses" class="info-section" style="display: none;">
             <h3>Available Courses</h3>
-            <ul id="courses-list">
-                <!-- Course items will include a "View" button -->
+            <ul id="courses-list">                
             </ul>
         </section>
 

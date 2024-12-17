@@ -13,6 +13,8 @@ function showPage(pageId) {
     // Fetch data for the required pages
     if (pageId === 'basic-info') {
         fetchStudentInfo();
+    } else if (pageId === 'courseCatalog') {
+        displayCourseCatalog();
     } else if (pageId === 'holds') {
         fetchHolds();
     } else if (pageId === 'schedule') {
@@ -22,9 +24,9 @@ function showPage(pageId) {
     } else if (pageId === 'advisor-info') {
         fetchAdvisorInfo();
     } else if (pageId === 'degree-audit') {
-        fetchDegreeAudit(); 
+        fetchDegreeAudit();
     } else if (pageId === 'unofficial-transcript') {
-        fetchTranscript(); 
+        fetchTranscript();
     } else if (pageId === 'view-registered-courses') {
         fetchRegisteredCourses();
     } else if (pageId === 'majors-minors') {
@@ -36,12 +38,7 @@ function showPage(pageId) {
 
 function fetchAdvisorInfo() {
     fetch('http://84.247.174.84/university/student/get_student_advisor.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load advisor information.');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(advisorData => {
             if (advisorData.error) {
                 alert(advisorData.error);
@@ -51,16 +48,126 @@ function fetchAdvisorInfo() {
                 document.getElementById('advisor-appointment-date').textContent = advisorData.dateOfAppointment;
             }
         })
-        .catch(error => {
-            console.error('Error fetching advisor info:', error);
-        });
+        .catch(error => console.error('Error fetching advisor info:', error));
 }
-
 
 // Function to hide the advisor information section
 function hideAdvisorInfo() {
     document.getElementById('advisor-info').style.display = 'none';
 }
+
+// Enhanced displayCourseCatalog function
+function displayCourseCatalog() {
+    const contentArea = document.getElementById("contentArea");
+    contentArea.innerHTML = `
+        <div class="course-catalog-container">
+            <div class="search-form">
+                <h2>Search Courses</h2>
+                <form id="searchForm">
+                    <label for="semester">Semester:</label>
+                    <select id="semester" name="semester">
+                        <option value="">-- Select Semester --</option>
+                    </select>
+
+                    <label for="courseID">Course ID:</label>
+                    <input type="text" id="courseID" name="courseID">
+
+                    <label for="crn">CRN:</label>
+                    <input type="text" id="crn" name="crn">
+
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department">
+
+                    <label for="professor">Professor:</label>
+                    <input type="text" id="professor" name="professor">
+
+                    <button type="button" id="searchBtn">Search</button>
+                </form>
+            </div>
+            <div id="courseResults" class="course-results">
+                <p>Search results will be displayed here.</p>
+            </div>
+        </div>
+    `;
+
+    fetchSemesters();
+
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+        const formData = new FormData(document.getElementById("searchForm"));
+        const searchParams = new URLSearchParams(formData).toString();
+
+        try {
+            const response = await fetch(`http://84.247.174.84/university/admin/course_catalog.php?${searchParams}`);
+            const data = await response.json();
+            const courseResults = document.getElementById("courseResults");
+
+            if (data.length === 0) {
+                courseResults.innerHTML = "<p>No courses found matching your criteria.</p>";
+                return;
+            }
+
+            const tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CRN</th>
+                            <th>Course Name</th>
+                            <th>Course ID</th>
+                            <th>Days</th>
+                            <th>Time</th>
+                            <th>Professor</th>
+                            <th>Available Seats</th>
+                            <th>Semester</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(course => `
+                            <tr>
+                                <td>${course.CRN}</td>
+                                <td>${course.CourseName}</td>
+                                <td>${course.CourseID}</td>
+                                <td>${course.Days}</td>
+                                <td>${course.TimeSlot}</td>
+                                <td>${course.Professor || 'N/A'}</td>
+                                <td>${course.AvailableSeats}</td>
+                                <td>${course.SemesterName}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            courseResults.innerHTML = tableHtml;
+        } catch (error) {
+            console.error("Error fetching course catalog:", error);
+            document.getElementById("courseResults").innerHTML = "<p>Error loading courses. Please try again later.</p>";
+        }
+    });
+}
+
+// Fetch semesters for the dropdown
+async function fetchSemesters() {
+    try {
+        const response = await fetch("http://84.247.174.84/university/admin/get_semesters.php");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const semesterDropdown = document.getElementById("semester");
+        semesterDropdown.innerHTML = data
+            .map(sem => `<option value="${sem.semesterID}">${sem.semesterName}</option>`)
+            .join('');
+    } catch (error) {
+        console.error("Error fetching semesters:", error);
+        alert("Failed to load semesters. Please try again later.");
+    }
+}
+
+
+// The rest of the existing code remains unchanged, ensuring all other functionality is intact.
+// Functions like fetchStudentInfo, fetchHolds, fetchSchedule, fetchGrades, fetchDegreeAudit, etc., remain as they were.
+
+
 
 // Fetch student details
 function fetchStudentInfo() {
@@ -70,9 +177,13 @@ function fetchStudentInfo() {
             document.getElementById('reg-number').innerText = data.registrationNumber;
             document.getElementById('name').innerText = data.name;
             document.getElementById('email').innerText = data.email;
-            document.getElementById('id-number').innerText = data.nationalIdNumber;
             document.getElementById('gender').innerText = data.gender;
             document.getElementById('dob').innerText = data.dateOfBirth;
+            document.getElementById('address').innerText = data.address;
+            document.getElementById('streetName').innerText = data.streetName;
+            document.getElementById('city').innerText = data.city;
+            document.getElementById('zipcode').innerText = data.zipcode;
+
         })
         .catch(error => console.log('Error fetching student info:', error));
 }
@@ -172,43 +283,54 @@ function fetchGrades() {
 }
 
 
-// Function to fetch degree audit info from the backend
+// Function to fetch and display degree audit data
 function fetchDegreeAudit() {
     fetch('http://84.247.174.84/university/student/get_degree_audit.php')
         .then(response => response.json())
         .then(degreeAudit => {
             const statusElement = document.getElementById('audit-status');
-            const missingCoursesList = document.getElementById('missing-courses-list');
+            const majorCoursesList = document.getElementById('major-courses-list');
+            const minorCoursesList = document.getElementById('minor-courses-list');
 
             // Clear previous content
-            missingCoursesList.innerHTML = '';
+            majorCoursesList.innerHTML = '';
+            minorCoursesList.innerHTML = '';
 
-            // Initialize variables to determine status and missing courses
-            let hasMissingCourses = false;
+            let hasIncompleteCourses = false;
 
             degreeAudit.forEach(course => {
-                if (course.status === 'Not Completed') {
-                    hasMissingCourses = true;
+                const row = `
+                    <tr>
+                        <td>${course.courseName}</td>
+                        <td>${course.semesterName || 'N/A'}</td>
+                        <td>${course.semesterYear || 'N/A'}</td>
+                        <td>${course.professorName || 'N/A'}</td>
+                        <td>${course.crnNo || 'N/A'}</td>
+                        <td>${course.courseStatus}</td>
+                        <td>${course.earnedGrade || 'Not Taken'}</td>
+                    </tr>
+                `;
 
-                    // Add course to the missing courses list
-                    const li = document.createElement('li');
-                    li.textContent = `${course.courseName} (Minimum Requirement is: ${course.minimumGradeRequired})`;
-                    missingCoursesList.appendChild(li);
+                if (course.courseType === 'Major') {
+                    majorCoursesList.innerHTML += row;
+                } else if (course.courseType === 'Minor') {
+                    minorCoursesList.innerHTML += row;
+                }
+
+                if (course.courseStatus !== 'Completed') {
+                    hasIncompleteCourses = true;
                 }
             });
 
-            // Update the status based on the presence of missing courses
-            if (hasMissingCourses) {
-                statusElement.textContent = 'Failed';
-            } else {
-                statusElement.textContent = 'Completed';
-            }
+            // Set overall status
+            statusElement.textContent = hasIncompleteCourses ? 'Incomplete' : 'Completed';
         })
         .catch(error => {
             console.error('Error fetching degree audit:', error);
             alert('Failed to load degree audit data.');
         });
 }
+
 
 // Function to fetch unofficial transcript info from the backend
 function fetchTranscript() {
@@ -246,33 +368,39 @@ function fetchTranscript() {
 }
 
 
-    function fetchRegisteredCourses() {
-        fetch('http://84.247.174.84/university/student/get_registered_courses.php')
-            .then(response => response.json())
-            .then(data => {
-                const registeredCoursesTbody = document.getElementById('registered-courses-info');
-                registeredCoursesTbody.innerHTML = ''; // Clear any previous content
-    
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(course => {
-                        const row = 
-                            `<tr>
-                                <td>${course.courseID}</td>
-                                <td>${course.courseName}</td>
-                                <td>${course.availableSeats}</td>
-                            </tr>;
-                        registeredCoursesTbody.innerHTML += row;
-                    `});
-                } else {
-                    // Display message if there are no registered courses
-                    registeredCoursesTbody.innerHTML = '<tr><td colspan="3">No registered courses found.</td></tr>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching registered courses:', error);
-                alert('Failed to load registered courses. Please try again later.');
-            });
-    }
+function fetchRegisteredCourses() {
+    fetch('http://84.247.174.84/university/student/get_registered_courses.php')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const registeredCoursesTbody = document.getElementById('registered-courses-info');
+            registeredCoursesTbody.innerHTML = ''; // Clear any previous content
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach((course) => {
+                    const row = `
+                        <tr>
+                            <td>${course.courseID}</td>
+                            <td>${course.courseName}</td>
+                            <td>${course.availableSeats}</td>
+                        </tr>`;
+                    registeredCoursesTbody.innerHTML += row; // Append row to tbody
+                });
+            } else {
+                // Display a message if there are no registered courses
+                registeredCoursesTbody.innerHTML = '<tr><td colspan="3">No registered courses found.</td></tr>';
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching registered courses:', error);
+            alert('Failed to load registered courses. Please try again later.');
+        });
+}
+
     
 
     function fetchMajorsAndMinors() {
@@ -313,15 +441,15 @@ function fetchTranscript() {
     function createDropdown(name, credits, id, section) {
         // Create container
         const container = document.createElement("div");
+        container.classList.add("dropdown-container");
     
         // Create dropdown button
         const button = document.createElement("button");
         button.classList.add("btn-dropdown");
         button.innerHTML = `
             ${name} (Credits Required: ${credits})
-            <span class="arrow">&#9660;</span>`
-        ;
-    
+            <span class="arrow">&#9660;</span>`;
+        
         // Create dropdown content
         const dropdownContent = document.createElement("div");
         dropdownContent.classList.add("dropdown-content");
@@ -329,13 +457,17 @@ function fetchTranscript() {
         // Add event listener to toggle dropdown
         button.addEventListener("click", () => {
             const isActive = dropdownContent.style.display === "block";
-            document.querySelectorAll(".dropdown-content").forEach(content => (content.style.display = "none")); // Hide other dropdowns
-            dropdownContent.style.display = isActive ? "none" : "block"; // Toggle current dropdown
-            button.classList.toggle("active", !isActive); // Toggle arrow rotation
-        });
+            document.querySelectorAll(".dropdown-content").forEach(content => {
+                content.style.display = "none"; // Hide other dropdowns
+            });
+            dropdownContent.style.display = isActive ? "none" : "block"; // Toggle dropdown
+            button.classList.toggle("active", !isActive);
     
-        // Fetch program requirements
-        fetchProgramRequirementsForDropdown(id, dropdownContent);
+            // Fetch and populate the dropdown only when it is expanded
+            if (!isActive) {
+                fetchProgramRequirementsForDropdown(id, dropdownContent);
+            }
+        });
     
         // Append button and content to container
         container.appendChild(button);
@@ -343,6 +475,7 @@ function fetchTranscript() {
     
         return container;
     }
+    
     
     
     
@@ -367,8 +500,10 @@ function fetchTranscript() {
                     if (data.length > 0) {
                         data.forEach(prerequisite => {
                             const listItem = document.createElement("li");
-                            listItem.textContent = `Prerequisite: ${prerequisite.prerequisiteDescription}, Minimum Grade: ${prerequisite.minimumGrade};
-                            requirementsList.appendChild(listItem)`;
+                            // Properly set the text content
+                            listItem.textContent = `Prerequisite: ${prerequisite.prerequisiteDescription}, Minimum Grade: ${prerequisite.minimumGrade}`;
+                            // Append the list item to the requirements list
+                            requirementsList.appendChild(listItem);
                         });
                     } else {
                         requirementsList.innerHTML = "<li>No prerequisites found for this course.</li>";
@@ -380,6 +515,7 @@ function fetchTranscript() {
                 alert('An error occurred while fetching program requirements.');
             });
     }
+    
     
 
     function fetchCourses() {
@@ -444,8 +580,8 @@ function fetchTranscript() {
                     const requirementsList = document.createElement("ul");
                     data.forEach(prerequisite => {
                         const listItem = document.createElement("li");
-                        listItem.textContent = `Prerequisite: ${prerequisite.prerequisiteDescription}, Minimum Grade: ${prerequisite.minimumGrade};
-                        requirementsList.appendChild(listItem)`;
+                        listItem.textContent = `Prerequisite: ${prerequisite.prerequisiteDescription}, Minimum Grade: ${prerequisite.minimumGrade}`;
+                        requirementsList.appendChild(listItem);
                     });
                     dropdownContent.appendChild(requirementsList);
                 } else {
@@ -457,3 +593,90 @@ function fetchTranscript() {
                 alert("An error occurred while fetching program requirements.");
             });
     }
+
+    // Dropdown toggle functionality for the Course Catalog
+const courseCatalogButton = document.querySelector('.dropdown-toggle');
+const dropdownContent = document.querySelector('.dropdown-content');
+
+courseCatalogButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = dropdownContent.style.display === 'block';
+    document.querySelectorAll('.dropdown-content').forEach(content => content.style.display = 'none');
+    dropdownContent.style.display = isVisible ? 'none' : 'block';
+});
+
+document.body.addEventListener('click', () => {
+    dropdownContent.style.display = 'none';
+});
+
+
+
+function redirectToCourseCatalog() {
+    window.location.href = "courseCatalog.html";
+}
+
+function enableEdit(fieldId) {
+    const field = document.getElementById(fieldId);
+    const originalValue = field.getAttribute("data-original-value");
+
+    if (fieldId === "gender") {
+        field.innerHTML = `
+            <select id="${fieldId}-input">
+                <option value="M" ${originalValue === "M" ? "selected" : ""}>M</option>
+                <option value="F" ${originalValue === "F" ? "selected" : ""}>F</option>
+            </select>
+        `;
+    } else if (fieldId === "dob") {
+        field.innerHTML = `<input type="date" id="${fieldId}-input" value="${originalValue}">`;
+    } else {
+        field.innerHTML = `<input type="text" id="${fieldId}-input" value="${originalValue}">`;
+    }
+
+    toggleEditButtons(fieldId, true);
+}
+
+function saveEdit(fieldId) {
+    const inputField = document.getElementById(`${fieldId}-input`);
+    const newValue = inputField.value.trim();
+
+    if (newValue === "") {
+        alert("Field cannot be empty.");
+        return;
+    }
+
+    fetch("http://84.247.174.84/university/student/update_student_info.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ field: fieldId, value: newValue }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                const field = document.getElementById(fieldId);
+                field.textContent = newValue;
+                field.setAttribute("data-original-value", newValue);
+
+                toggleEditButtons(fieldId, false);
+            } else {
+                alert(data.error || "Failed to update field.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error updating field:", error);
+            alert("An error occurred while updating the field.");
+        });
+}
+
+function cancelEdit(fieldId) {
+    const field = document.getElementById(fieldId);
+    const originalValue = field.getAttribute("data-original-value");
+
+    field.textContent = originalValue;
+    toggleEditButtons(fieldId, false);
+}
+
+function toggleEditButtons(fieldId, isEditing) {
+    document.getElementById(`${fieldId}-edit`).style.display = isEditing ? "none" : "inline-block";
+    document.getElementById(`${fieldId}-save`).style.display = isEditing ? "inline-block" : "none";
+    document.getElementById(`${fieldId}-cancel`).style.display = isEditing ? "inline-block" : "none";
+}

@@ -99,7 +99,7 @@ document.getElementById('createCourseForm').addEventListener('submit', (e) => {
 
 // Fetch and display the Master Schedule
 function fetchMasterSchedule() {
-    fetch('http://84.247.174.84/university/admin/master_schedule.php')  // Correct endpoint for fetching course sections
+    fetch('http://84.247.174.84/university/admin/master_schedule.php') 
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('masterScheduleTableBody');

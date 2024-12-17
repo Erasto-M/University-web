@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js" defer></script>
+</head>
+<body>
+    <header class="slim-header">
+        <div class="header-content">
+            <img src="logo.jpg" alt="University Logo" class="logo">
+            <div class="university-name">
+                <h1>Arthur Morgan University</h1>
+                <p>Better Life Through Technology</p>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="navigation-buttons">
+        <div class="card-container">
+            <div class="card">
+                <h3>Master Schedule</h3>
+                <button id="btnMasterSchedule">Master Schedule</button>
+                <p>View all the schedules here.</p>
+            </div>
+            <div class="card">
+                <h3>Course Catalog</h3>
+                <button id="btnCourseCatalog">Course Catalog</button>
+                <p>Find all available courses here.</p>
+            </div>
+            <div class="card">
+                <h3>Login</h3>
+                <button id="btnLogin" onclick="location.href='http:/student/Frontend/login.html'">Login</button>
+                <p>Login to your account here.</p>
+            </div>
+        </div>
+    </div>
+        
+
+        <!-- Dynamic content area -->
+        <div id="contentArea"></div>
+    </main>
+
+    
+</body>
+
+
+</html>

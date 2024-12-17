@@ -1,41 +1,82 @@
 <?php
-header("Access-Control-Allow-Origin: *");  // Allow all origins, or specify your React app's URL
-header("Content-Type: application/json");  // Ensure the response is in JSON format
 
-session_start();  // Start the session to access session variables
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
-include 'db_connection.php';  // Include your database connection file
+include('db_connection.php');
+session_start();
 
-// Check if user is logged in and is a faculty member
-if (!isset($_SESSION['userId']) || !isset($_SESSION['facultyFirstName']) || !isset($_SESSION['facultyLastName'])) {
-    // Redirect to login page if not logged in
-    header('Location: ./login.html');
+if (!isset($_SESSION['userId'])) {
+    echo json_encode(['error' => 'User not logged in']);
     exit();
 }
 
-$facultyId = $_SESSION['userId'];  // Get the faculty ID from session
+// Database connection configuration
+$servername = "84.247.174.84";
+$username = "ecoville"; // Your database username
+$password = "ecoville"; // Your database password// Your database password
+$dbname = "universitydb"; Update as per your MySQL password
 
-// Query to fetch the advisees of the current faculty member
-$sql = "SELECT s.StudentId, s.FirstName, s.LastName, a.AdvisorId
-        FROM Student s
-        JOIN Advisor a ON s.StudentId = a.StudentId
-        WHERE a.FacultyId = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $facultyId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Check if there are any advisees
-$advisees = [];
-while ($row = $result->fetch_assoc()) {
-    $advisees[] = $row;  // Store each advisee in an array
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 
-// Return advisee data in JSON format
+/**
+ * Retrieve advisees for a specific faculty for "View Advisement" use case.
+ */
+function getAdvisees($facultyID) {
+    global $pdo;
+    $sql = "SELECT AppUser.userID AS studentId, AppUser.firstName, AppUser.lastName, AppUser.email, Advisor.dateOfAppointment 
+            FROM Advisor 
+            JOIN AppUser ON Advisor.studentID = AppUser.userID 
+            WHERE Advisor.facultyID = :facultyID";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['facultyID' => $facultyID]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Retrieve all advisors for "View All Advisors" use case.
+ */
+function getAllAdvisors() {
+    global $pdo;
+    $sql = "SELECT AppUser.userID AS facultyId, AppUser.firstName, AppUser.lastName, AppUser.email 
+            FROM Advisor 
+            JOIN AppUser ON Advisor.facultyID = AppUser.userID";
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Retrieve all advisees for "View All Advisees" use case.
+ */
+function getAllAdvisees() {
+    global $pdo;
+    $sql = "SELECT AppUser.userID AS studentId, AppUser.firstName, AppUser.lastName, AppUser.email 
+            FROM Advisor 
+            JOIN AppUser ON Advisor.studentID = AppUser.userID";
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Simulate faculty login (for demonstration purposes, use session-based faculty ID)
+$facultyID = $_SESSION['userId']; // Use dynamic session-based user ID
+
+// Retrieve Advisees
+$advisees = getAdvisees($facultyID);
+
+// Retrieve All Advisors
+$allAdvisors = getAllAdvisors();
+
+// Retrieve All Advisees
+$allAdvisees = getAllAdvisees();
+
+// Return all data as JSON
 echo json_encode([
-    'status' => 'success',
-    'message' => 'Advisees fetched successfully.',
-    'data' => $advisees
+    'advisees' => $advisees,
+    'allAdvisors' => $allAdvisors,
+    'allAdvisees' => $allAdvisees
 ]);
-exit();
-?>

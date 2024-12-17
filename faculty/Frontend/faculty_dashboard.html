@@ -1,47 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Character set and responsiveness meta tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard</title>
+    <!-- External stylesheet for styling the page -->
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
+    <!-- Header Section -->
     <header>
         <div class="logo">
+            <!-- University Logo -->
             <img src="logo.jpg" alt="University Logo">
             <h1>Arthur Morgan University</h1>
             <p>Shaping the Future Through Knowledge</p>
         </div>
+
+        <!-- Navigation Buttons -->
         <nav>
             <button class="btn">Notice to Faculty! Faculty Meeting Schedules</button>
             <button class="btn">Notice on Course Changes</button>
             <button class="btn">Pay Fees via eCitizen</button>
+            <!-- Logout Button -->
             <button class="btn logout-btn" onclick="logout()">Logout</button>
         </nav>
     </header>
 
+    <!-- Main Content Section -->
     <main>
-        <!-- Navigation Section for Faculty Pages -->
+        <!-- Navigation Buttons for Different Sections -->
         <div class="nav-buttons">
-            <button class="btn" onclick="showPage('faculty-info')">About</button>
+            <!-- Individual Buttons to Show Specific Pages -->
+            <button class="btn" onclick="showPage('basic-info')">About</button>
             <button class="btn" onclick="showPage('faculty-console')">Faculty Console</button>
-            <button class="btn" onclick="showPage('advisees')">View Advisees</button>
-            <button class="btn" onclick="showPage('course-roster')">Course Roster</button>
             <button class="btn" onclick="showPage('attendance')">Manage Attendance</button>
             <button class="btn" onclick="showPage('assign-grades')">Assign Grades</button>
 
-            <!-- Advisement Section -->
+            <!-- Advisement Dropdown -->
             <div class="dropdown">
                 <button class="btn dropdown-toggle">Advisement</button>
                 <div class="dropdown-content">
                     <button class="btn" onclick="showPage('view-advisement')">View Advisement</button>
                     <button class="btn" onclick="showPage('view-all-advisors')">View All Advisors</button>
-                    <button class="btn" onclick="showPage('view-degree-audit')">View Degree Audit</button>
                 </div>
             </div>
 
-            <!-- Change Password Section -->
+            <!-- Settings Dropdown -->
             <div class="dropdown">
                 <button class="btn dropdown-toggle">Settings</button>
                 <div class="dropdown-content">
@@ -51,67 +57,87 @@
         </div>
 
         <!-- Faculty Console Section -->
-        <section id="faculty-console" class="info-section">
+        <section id="faculty-console" class="info-section" style="display:none;">
             <h3>Faculty Console</h3>
-            <button class="btn" onclick="showPage('faculty-profile')">View Faculty Profile</button>
-            <button class="btn" onclick="showPage('faculty-schedule')">View Faculty Schedule</button>
+            <button class="btn" onclick="showPage('faculty-schedule')">Semester Schedule</button>
+            <button class="btn" onclick="showPage('semester-schedule')">Course Sections</button>
         </section>
 
         <!-- Advisement Section -->
         <section id="view-advisement" class="info-section" style="display:none;">
             <h3>View Advisement</h3>
-            <button class="btn" onclick="showPage('view-advisees')">View Your Advisees</button>
-            <button class="btn" onclick="showPage('view-student-holds')">View Student Holds</button>
-            <button class="btn" onclick="showPage('view-student-schedule')">View Student Semester Schedule</button>
-            <button class="btn" onclick="showPage('view-student-transcript')">View Unofficial Transcript</button>
+            <!-- Buttons to Switch Between Advisees -->
+            <button class="btn" onclick="showAdvisementSection('advisees-section')">View Your Advisees</button>
+            <button class="btn" onclick="showAdvisementSection('all-advisees-section')">View All Advisees</button>
+
+            <!-- Section: Your Advisees -->
+            <div id="advisees-section" class="advisement-container">
+                <h4>Your Advisees</h4>
+                <table border="1" cellspacing="0" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Date of Appointment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="advisees-table-body">
+                        <!-- Data dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section: All Advisees -->
+            <div id="all-advisees-section" class="advisement-container" style="display:none;">
+                <h4>All Advisees</h4>
+                <table border="1" cellspacing="0" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-advisees-table-body">
+                        <!-- Data dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <!-- View All Advisors Section -->
-        <section id="view-all-advisors" class="info-section" style="display:none;">
-            <h3>View All Advisors</h3>
-            <p>Here, you will be able to view a list of all faculty advisors.</p>
-            <!-- Advisors list will be dynamically loaded here -->
-        </section>
-
-        <!-- View Advisees Section -->
-        <section id="view-advisees" class="info-section" style="display:none;">
-            <h3>Your Advisees</h3>
-            <p>List of all the students you advise will be displayed here.</p>
-            <!-- Advisees list will be dynamically loaded here -->
-        </section>
-
-        <!-- Course Roster Section -->
-        <section id="course-roster" class="info-section" style="display:none;">
-            <h3>Course Roster</h3>
-            <table id="course-roster-table">
+        <section id="view-all-advisors" class="info-section" style="display: none;">
+            <h3>All Advisors</h3>
+            <table border="1" cellspacing="0" cellpadding="5" width="100%">
                 <thead>
                     <tr>
-                        <th>Course ID</th>
-                        <th>Course Name</th>
-                        <th>Credits</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Specialty</th>
+                        <th>Rank</th>
+                        <th>Faculty Type</th>
                     </tr>
                 </thead>
-                <tbody id="course-roster-info">
-                    <!-- Course roster data will be dynamically loaded here -->
+                <tbody id="all-advisors-table-body">
+                    <!-- Advisor rows will be dynamically added here -->
                 </tbody>
             </table>
         </section>
 
-        <!-- Attendance Management Section -->
-        <section id="attendance" class="info-section" style="display:none;">
-            <h3>Manage Attendance</h3>
-            <p>Select the course and date to manage attendance.</p>
-            <!-- Attendance form will be dynamically loaded here -->
-        </section>
 
-        <!-- Assign Grades Section -->
-        <section id="assign-grades" class="info-section" style="display:none;">
-            <h3>Assign Grades</h3>
-            <p>Select the student and course to assign grades.</p>
-            <!-- Grade assignment form will be dynamically loaded here -->
-        </section>
+        <!-- Placeholder for dynamically loaded Personal Information -->
+        <section id="basic-info" class="info-section" style="display:none;"></section>
 
-        <!-- Change Password Section -->
+        <!-- Placeholder for Assign Grades table -->
+        <div id="section-details"></div>
+
+
+
+        <!-- Section: Change Password -->
         <section id="change-password" class="info-section" style="display:none;">
             <h3>Change Password</h3>
             <form id="change-password-form">
@@ -127,34 +153,86 @@
                 <button type="submit" class="btn">Submit</button>
             </form>
         </section>
-        
-        <!-- Faculty Profile Section -->
-        <section id="faculty-profile" class="info-section" style="display:none;">
-            <h3>Faculty Profile</h3>
-            <p>View and edit your profile information here.</p>
-            <!-- Profile information will be dynamically loaded here -->
+
+        <!-- Semester Schedule Section -->
+        <section id="faculty-schedule" class="info-section" style="display:none;">
+            <h3>Semester Schedule</h3>
+            <table border="1" cellspacing="0" cellpadding="5" id="course-schedule-table" width="100%">
+                <thead>
+                    <tr>
+                        <th>CRN</th>
+                        <th>Course Name</th>
+                        <th>Course ID</th>
+                        <th>Section Number</th>
+                        <th>Days</th>
+                        <th>Time Slot</th>
+                        <th>Room Number</th>
+                        <th>Building Name</th>
+                        <th>Professor</th>
+                        <th>Available Seats</th>
+                        <th>Semester</th>
+                        <th>Department</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table data will be dynamically populated here -->
+                </tbody>
+            </table>
         </section>
 
-        <!-- Faculty Schedule Section -->
-        <section id="faculty-schedule" class="info-section" style="display:none;">
-            <h3>Faculty Schedule</h3>
-            <p>View your upcoming teaching schedule here.</p>
-            <!-- Schedule details will be dynamically loaded here -->
+        <!-- Semester Schedule Section -->
+        <section id="semester-schedule" class="info-section" style="display:none;">
+            <h3>Faculty Course Sections</h3>
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Year</th>
+                        <th>Duration</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="course-section-body">
+                    <!-- Data dynamically loaded here -->
+                </tbody>
+            </table>
         </section>
+
+        
+
+
 
     </main>
 
+    <!-- Footer Section -->
     <footer>
         <p>&copy; 2024 Arthur Morgan University. All rights reserved.</p>
     </footer>
 
+    <!-- JavaScript: Logout Function -->
     <script>
-        // JavaScript function for logout
         function logout() {
-            window.location.href = 'http://84.247.174.84/university/student/logout.php';
+            window.location.href = 'http://localhost/student/logout.php';
+        }
+
+        // Function to show specific sections
+        function showPage(pageId) {
+            const sections = document.querySelectorAll('.info-section');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        // Function to toggle advisement sections
+        function showAdvisementSection(sectionId) {
+            document.getElementById('advisees-section').style.display = 'none';
+            document.getElementById('all-advisees-section').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
         }
     </script>
 
-    <script src="dashboard.js"></script> <!-- Link to JavaScript file for page interaction -->
+    <!-- External JavaScript for additional functionality -->
+    <script src="dashboard.js"></script>
 </body>
 </html>

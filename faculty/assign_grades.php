@@ -1,82 +1,61 @@
 <?php
-header("Access-Control-Allow-Origin: *");  // Allow all origins, or specify your React app's URL
-header("Content-Type: application/json");  // Ensure the response is in JSON format
+session_start();
+header('Content-Type: application/json');
 
-session_start();  // Start the session to access session variables
+// Database Configuration
+$servername = "84.247.174.84";
+$username = "ecoville"; // Your database username
+$password = "ecoville"; // Your database password// Your database password
+$dbname = "universitydb";
 
-include 'db_connection.php';  // Include your database connection file
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Check if user is logged in and is a faculty member
-if (!isset($_SESSION['userId']) || !isset($_SESSION['facultyId'])) {
-    // Redirect to login page if not logged in
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'User not logged in. Please log in first.'
-    ]);
-    exit();
-}
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        // Fetch student roster and course name for a specific CRN
+        if (isset($_GET['crnNo'])) {
+            $crnNo = $_GET['crnNo'];
 
-// Get the faculty ID from session
-$facultyId = $_SESSION['facultyId'];
+            $sql = "
+                SELECT e.studentID, CONCAT(a.firstName, ' ', a.lastName) AS studentName, 
+                       e.grade, c.courseName
+                FROM Enrollment e
+                JOIN AppUser a ON e.studentID = a.userID
+                JOIN CourseSection cs ON e.crnNo = cs.crnNo
+                JOIN Course c ON cs.courseID = c.courseID
+                WHERE e.crnNo = :crnNo
+            ";
 
-// Check if the necessary POST data is provided
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['courseSectionId']) && isset($_POST['studentId']) && isset($_POST['grade'])) {
-    $courseSectionId = $_POST['courseSectionId'];
-    $studentId = $_POST['studentId'];
-    $grade = $_POST['grade'];  // Assuming grade is a string (e.g., 'A', 'B+', etc.)
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['crnNo' => $crnNo]);
 
-    // Validate grade input
-    $validGrades = ['A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F'];
-    if (!in_array($grade, $validGrades)) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Invalid grade. Please enter a valid grade (A, B+, B, C+, C, D+, D, F).'
-        ]);
-        exit();
+            $roster = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if ($roster) {
+                echo json_encode(['status' => 'success', 'roster' => $roster, 'courseName' => $roster[0]['courseName']]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No students found for this section']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Missing CRN parameter']);
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Update student grades
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (isset($data['crnNo'], $data['grades'])) {
+            foreach ($data['grades'] as $studentID => $grade) {
+                $updateSQL = "UPDATE Enrollment SET grade = :grade WHERE crnNo = :crnNo AND studentID = :studentID";
+                $stmt = $pdo->prepare($updateSQL);
+                $stmt->execute(['grade' => $grade, 'crnNo' => $data['crnNo'], 'studentID' => $studentID]);
+            }
+
+            echo json_encode(['status' => 'success', 'message' => 'Grades updated successfully']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid data provided']);
+        }
     }
-
-    // Check if the faculty is assigned to the course section
-    $sql = "SELECT * FROM CourseSection WHERE CourseSectionId = ? AND FacultyId = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $courseSectionId, $facultyId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // If the faculty is not assigned to this course section, return an error
-    if ($result->num_rows === 0) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'You are not authorized to assign grades for this course section.'
-        ]);
-        exit();
-    }
-
-    // Prepare the SQL query to insert or update grades for the student in the course section
-    $sql = "INSERT INTO Grades (CourseSectionId, StudentId, Grade)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE Grade = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $courseSectionId, $studentId, $grade, $grade);
-
-    // Execute the query
-    if ($stmt->execute()) {
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Grade assigned successfully.'
-        ]);
-    } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Failed to assign grade. Please try again later.'
-        ]);
-    }
-    exit();
-} else {
-    // If POST data is missing or invalid
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Invalid request. Please provide course section ID, student ID, and grade.'
-    ]);
-    exit();
+} catch (PDOException $e) {
+    echo json_encode(['status' => 'error', 'message' => 'Database Error: ' . $e->getMessage()]);
 }
 ?>
