@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 09, 2024 at 10:12 PM
+-- Generation Time: Dec 17, 2024 at 12:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -97,9 +97,9 @@ CREATE TABLE `appuser` (
 --
 
 INSERT INTO `appuser` (`userID`, `firstName`, `middleName`, `lastName`, `gender`, `DOB`, `houseNo`, `streetName`, `city`, `state`, `zipcode`, `phoneNo`, `userType`, `email`, `password`) VALUES
-(1, 'Alice', 'J.', 'Smith', 'F', '1998-03-15', '12A', 'Oak Street', 'Metropolis', 'NY', '10001', '1234567890', 'Student', 'alice.smith.1@student.com', 'Password123'),
+(1, 'Alice Smith', 'J.', 'Smith', 'F', '2000-10-03', '144DD', 'Oak Avenue', 'Metropolis', 'NY', '10002', '1234567890', 'Student', 'alice.smith.1@student.com', 'Password123'),
 (2, 'Bob', 'K.', 'Johnson', 'M', '1985-06-22', '23B', 'Maple Avenue', 'Gotham', 'CA', '90002', '0987654321', 'Faculty', 'bob.johnson.2@faculty.com', 'Password456'),
-(3, 'Mary', 'L.', 'Williams', 'F', '1990-01-30', '45C', 'Pine Drive', 'Central City', 'TX', '33004', '2233445566', 'Admin', 'cathy.williams.3@admin.com', 'Password789'),
+(3, 'Cathy', 'L.', 'Williams', 'F', '1990-01-30', '45C', 'Pine Drive', 'Central City', 'TX', '33004', '2233445566', 'Admin', 'cathy.williams.3@admin.com', 'Password789'),
 (4, 'David', 'M.', 'Brown', 'M', '1990-01-05', '67D', 'Birch Boulevard', 'Star City', 'FL', '33004', '2233445566', 'Visitor', 'david.brown.4@university.com', 'Password321'),
 (5, 'Eve', 'N.', 'Davis', 'F', '2000-08-30', '89E', 'Cedar Lane', 'Coast City', 'WA', '98005', '3344556677', 'Student', 'eve.davis.5@student.com', 'Password654'),
 (6, 'Frank', 'O.', 'Miller', 'M', '1982-12-12', '101F', 'Spruce Court', 'Keystone City', 'PA', '19006', '4455667788', 'Faculty', 'frank.miller.6@faculty.com', 'Password001'),
@@ -157,7 +157,11 @@ INSERT INTO `building` (`buildingID`, `buildingName`, `used`) VALUES
 (5, 'Engineering Block', 'Academic'),
 (6, 'Sports Complex', 'Administrative'),
 (7, 'Hostel C', 'Residential'),
-(8, 'Arts Block', 'Academic');
+(8, 'Arts Block', 'Academic'),
+(9, 'Science Building', 'Academic'),
+(10, 'Arts Block', 'Academic'),
+(11, 'Science Building', 'Academic'),
+(12, 'Arts Block', 'Academic');
 
 -- --------------------------------------------------------
 
@@ -179,14 +183,17 @@ CREATE TABLE `course` (
 --
 
 INSERT INTO `course` (`courseID`, `courseName`, `deptID`, `numOfCredits`, `description`, `courseLevel`) VALUES
-(1, 'Introduction to Programming', 1, 3, 'Learn the basics of programming.', '100'),
+(0, 'Introduction to Programming', 1, 3, 'Learn the basics of programming.', '100'),
 (2, 'Data Structures', 1, 4, 'In-depth study of data organization.', '200'),
 (3, 'Thermodynamics', 2, 3, 'Introduction to heat and work transfer.', '200'),
 (4, 'Mechanics', 2, 4, 'Study of motion and forces.', '300'),
 (5, 'Quantum Physics', 3, 4, 'Fundamentals of quantum mechanics.', '300'),
 (6, 'Linear Algebra', 4, 3, 'Matrix theory and linear systems.', '200'),
 (7, 'Shakespeare Studies', 5, 3, 'In-depth study of Shakespeare’s works.', '300'),
-(8, 'Cell Biology', 8, 3, 'Understanding cellular functions.', '100');
+(8, 'Cell Biology', 8, 3, 'Understanding cellular functions.', '100'),
+(9, 'Thermodynamics', 1, 3, 'Study of heat transfer', '300'),
+(10, 'Data Structures', 1, 3, 'Introduction to data structures', '200'),
+(11, 'Thermodynamics', 1, 3, 'Study of heat transfer', '300');
 
 -- --------------------------------------------------------
 
@@ -236,31 +243,33 @@ CREATE TABLE `coursesection` (
 --
 
 INSERT INTO `coursesection` (`crnNo`, `courseID`, `sectionNo`, `facultyID`, `timeSlot`, `roomID`, `availableSeats`, `semesterID`) VALUES
-(1, 1, 1, 2, 1, 1, 30, 1),
-(2, 2, 1, 6, 2, 2, 25, 1),
-(3, 3, 1, 2, 3, 3, 40, 2),
-(4, 4, 1, 6, 4, 4, 35, 2),
-(5, 5, 1, 2, 5, 5, 50, 3),
-(6, 6, 1, 6, 6, 6, 45, 3),
-(7, 7, 1, 2, 7, 7, 20, 4),
-(8, 8, 1, 6, 8, 8, 60, 4),
-(9, 1, 1, 2, 1, 1, 30, 1),
-(10, 2, 1, 6, 2, 2, 25, 1),
-(11, 3, 1, 2, 3, 3, 40, 2),
-(12, 4, 1, 6, 4, 4, 35, 2),
-(13, 5, 1, 2, 5, 5, 50, 3),
-(14, 6, 1, 6, 6, 6, 45, 3),
-(15, 7, 1, 2, 7, 7, 20, 4),
-(16, 8, 1, 6, 8, 8, 60, 4),
-(17, 3, 1, 3, 31, 8, 60, 8),
-(18, 3, 2, 6, 3, 4, 50, 8),
-(19, 3, 3, 3, 33, 3, 6, 3),
-(20, 2, 2, 3, 2, 4, 25, 8),
-(21, 2, 3, 3, 2, 8, 60, 8),
-(22, 4, 2, 5, 2, 8, 12, 8),
-(26, 2, 1, 3, 2, 8, 340, 8),
-(27, 3, 4, 2, 4, 8, 1, 8),
-(28, 3, 2, 3, 1, 8, 18, 8);
+(1, 1, 1, 2, 25, 1, 30, 1),
+(2, 2, 1, 6, 27, 2, 25, 1),
+(3, 3, 1, 2, 28, 3, 40, 2),
+(4, 4, 1, 6, 29, 4, 35, 2),
+(5, 5, 1, 2, 30, 5, 50, 3),
+(6, 6, 1, 6, 31, 6, 45, 3),
+(7, 7, 1, 2, 30, 401, 20, 4),
+(8, 8, 1, 6, 31, 402, 60, 4),
+(9, 1, 1, 2, 25, 1, 30, 1),
+(10, 2, 1, 6, 27, 2, 25, 1),
+(11, 3, 1, 2, 28, 3, 40, 2),
+(12, 4, 1, 6, 29, 4, 35, 2),
+(13, 5, 1, 2, 30, 5, 50, 3),
+(14, 6, 1, 6, 31, 6, 45, 3),
+(15, 7, 1, 2, 29, 401, 20, 4),
+(16, 8, 1, 6, 28, 402, 60, 4),
+(17, 3, 1, 3, 26, 8, 60, 8),
+(18, 3, 2, 6, 28, 4, 50, 8),
+(19, 3, 3, 3, 27, 3, 6, 3),
+(20, 2, 2, 3, 29, 4, 25, 8),
+(21, 2, 3, 3, 30, 8, 60, 8),
+(22, 4, 2, 5, 31, 8, 12, 8),
+(26, 2, 1, 3, 29, 8, 340, 8),
+(27, 3, 4, 2, 30, 8, 1, 8),
+(28, 3, 2, 3, 31, 8, 18, 8),
+(29, 1, 1, 1, 25, 1, 30, 1),
+(30, 2, 1, 2, 26, 2, 25, 1);
 
 -- --------------------------------------------------------
 
@@ -284,8 +293,7 @@ INSERT INTO `day` (`dayID`, `weekDay`) VALUES
 (4, 'Thursday'),
 (5, 'Friday'),
 (6, 'Saturday'),
-(7, 'Sunday'),
-(8, '');
+(7, 'Sunday');
 
 -- --------------------------------------------------------
 
@@ -690,7 +698,9 @@ CREATE TABLE `majorrequirements` (
 
 INSERT INTO `majorrequirements` (`majorID`, `courseID`, `minimumGradeRequired`) VALUES
 (1, 1, 'B'),
+(2, 1, 'B'),
 (2, 2, 'C'),
+(2, 3, 'C'),
 (3, 3, 'C'),
 (4, 4, 'B'),
 (5, 5, 'A'),
@@ -723,7 +733,25 @@ INSERT INTO `minor` (`minorID`, `minorName`, `deptID`, `numOfCreditsRequired`) V
 (5, 'Creative Writing', 5, 15),
 (6, 'Physical Education', 6, 10),
 (7, 'Art History', 7, 18),
-(8, 'Genetics', 8, 20);
+(8, 'Genetics', 8, 20),
+(9, 'Environmental Science', 2, 18),
+(10, 'Data Analytics', 3, 15),
+(11, 'Creative Writing', 4, 12),
+(12, 'Environmental Science', 2, 18),
+(13, 'Data Analytics', 3, 15),
+(14, 'Creative Writing', 4, 12),
+(15, 'Environmental Science', 2, 18),
+(16, 'Data Analytics', 3, 15),
+(17, 'Creative Writing', 4, 12),
+(18, 'Environmental Science', 2, 18),
+(19, 'Data Analytics', 3, 15),
+(20, 'Creative Writing', 4, 12),
+(21, 'Environmental Science', 2, 18),
+(22, 'Data Analytics', 3, 15),
+(23, 'Creative Writing', 4, 12),
+(24, 'Environmental Science', 2, 18),
+(25, 'Data Analytics', 3, 15),
+(26, 'Creative Writing', 4, 12);
 
 -- --------------------------------------------------------
 
@@ -743,8 +771,14 @@ CREATE TABLE `minorrequirements` (
 
 INSERT INTO `minorrequirements` (`minorID`, `courseID`, `minimumGradeRequired`) VALUES
 (1, 1, 'C'),
+(1, 2, 'C'),
+(1, 4, 'C'),
 (2, 2, 'C'),
+(2, 4, 'B'),
+(2, 6, 'B'),
 (3, 3, 'B'),
+(3, 4, 'B'),
+(3, 5, 'A'),
 (4, 4, 'A'),
 (5, 5, 'B'),
 (6, 6, 'B'),
@@ -800,7 +834,17 @@ INSERT INTO `period` (`periodID`, `startTime`, `endTime`) VALUES
 (5, '12:00:00', '13:00:00'),
 (6, '13:00:00', '14:00:00'),
 (7, '14:00:00', '15:00:00'),
-(8, '15:00:00', '16:00:00');
+(8, '15:00:00', '16:00:00'),
+(9, '09:00:00', '10:30:00'),
+(10, '10:45:00', '12:15:00'),
+(11, '09:00:00', '10:30:00'),
+(12, '10:45:00', '12:15:00'),
+(13, '08:00:00', '09:00:00'),
+(14, '09:00:00', '10:30:00'),
+(15, '10:45:00', '12:15:00'),
+(16, '13:00:00', '14:30:00'),
+(17, '14:00:00', '15:00:00'),
+(18, '15:30:00', '17:00:00');
 
 -- --------------------------------------------------------
 
@@ -827,7 +871,13 @@ INSERT INTO `room` (`roomID`, `roomNo`, `roomType`, `buildingID`) VALUES
 (5, '301', 'Office', 2),
 (6, '302', 'Office', 2),
 (7, '401', 'Office', 8),
-(8, '402', 'Lecture', 8);
+(8, '402', 'Lecture', 8),
+(9, '101', 'Lecture', 1),
+(10, '402', 'Lecture', 2),
+(11, '101', 'Lecture', 1),
+(12, '402', 'Lecture', 2),
+(401, '401', 'Lecture', 4),
+(402, '402', 'Lecture', 4);
 
 -- --------------------------------------------------------
 
@@ -850,10 +900,8 @@ CREATE TABLE `semester` (
 INSERT INTO `semester` (`semesterID`, `semesterName`, `semesterYear`, `startTime`, `endTime`) VALUES
 (1, 'Fall', 2023, '2023-09-01', '2023-12-15'),
 (2, 'Spring', 2024, '2024-01-15', '2024-05-10'),
-(3, 'Summer', 2024, '2024-06-01', '2024-08-15'),
 (4, 'Fall', 2024, '2024-09-01', '2024-12-15'),
 (5, 'Spring', 2025, '2025-01-15', '2025-05-10'),
-(6, 'Summer', 2025, '2025-06-01', '2025-08-15'),
 (7, 'Fall', 2025, '2025-09-01', '2025-12-15'),
 (8, 'Spring', 2026, '2026-01-15', '2026-05-10');
 
@@ -878,8 +926,8 @@ INSERT INTO `student` (`studentID`, `studentYear`, `studentType`) VALUES
 (2, 'Sophomore', 'Undergraduate'),
 (3, 'Junior', 'Undergraduate'),
 (4, 'Senior', 'Undergraduate'),
-(5, '', 'Graduate'),
-(6, '', 'Graduate'),
+(5, 'Freshman', 'Undergraduate'),
+(6, 'Senior', 'Graduate'),
 (7, '', 'Graduate'),
 (8, '', 'Graduate');
 
@@ -979,10 +1027,13 @@ CREATE TABLE `studentminor` (
 
 INSERT INTO `studentminor` (`studentID`, `minorID`) VALUES
 (1, 1),
+(1, 2),
+(1, 4),
+(2, 1),
 (2, 2),
+(2, 3),
 (3, 3),
 (4, 4),
-(5, 5),
 (6, 6),
 (7, 7),
 (8, 8);
@@ -1011,7 +1062,17 @@ INSERT INTO `timeslot` (`timeSlotID`, `days`, `periods`) VALUES
 (29, 5, 5),
 (30, 6, 6),
 (31, 7, 7),
-(32, 8, 8);
+(32, 8, 8),
+(33, 1, 1),
+(34, 2, 2),
+(35, 1, 1),
+(36, 2, 2),
+(37, 1, 1),
+(38, 1, 2),
+(39, 2, 2),
+(40, 3, 3),
+(41, 4, 4),
+(42, 7, 5);
 
 -- --------------------------------------------------------
 
@@ -1030,11 +1091,20 @@ CREATE TABLE `timeslotday` (
 
 INSERT INTO `timeslotday` (`timeSlotID`, `dayID`) VALUES
 (25, 1),
+(25, 2),
+(26, 1),
 (26, 2),
+(26, 6),
+(26, 7),
 (27, 3),
+(27, 4),
+(28, 3),
 (28, 4),
 (29, 5),
+(29, 7),
+(30, 5),
 (30, 6),
+(31, 6),
 (31, 7),
 (32, 8);
 
@@ -1055,12 +1125,22 @@ CREATE TABLE `timeslotperiod` (
 
 INSERT INTO `timeslotperiod` (`timeSlotID`, `periodID`) VALUES
 (25, 1),
+(25, 2),
+(26, 1),
 (26, 2),
+(26, 7),
+(27, 2),
 (27, 4),
+(27, 5),
+(28, 3),
 (28, 5),
+(29, 4),
 (29, 6),
+(29, 7),
+(30, 5),
 (30, 7),
 (31, 3),
+(31, 6),
 (32, 8);
 
 -- --------------------------------------------------------
@@ -1448,31 +1528,31 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `appuser`
 --
 ALTER TABLE `appuser`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `building`
 --
 ALTER TABLE `building`
-  MODIFY `buildingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `buildingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `course`
 --
 ALTER TABLE `course`
-  MODIFY `courseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `courseID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `coursesection`
 --
 ALTER TABLE `coursesection`
-  MODIFY `crnNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `crnNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `day`
 --
 ALTER TABLE `day`
-  MODIFY `dayID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `dayID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `department`
@@ -1508,19 +1588,19 @@ ALTER TABLE `major`
 -- AUTO_INCREMENT for table `minor`
 --
 ALTER TABLE `minor`
-  MODIFY `minorID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `minorID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `period`
 --
 ALTER TABLE `period`
-  MODIFY `periodID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `periodID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `roomID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `roomID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=403;
 
 --
 -- AUTO_INCREMENT for table `semester`
@@ -1532,7 +1612,7 @@ ALTER TABLE `semester`
 -- AUTO_INCREMENT for table `timeslot`
 --
 ALTER TABLE `timeslot`
-  MODIFY `timeSlotID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `timeSlotID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- Constraints for dumped tables
@@ -1556,8 +1636,7 @@ ALTER TABLE `advisor`
 --
 ALTER TABLE `attendance`
   ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`studentID`) REFERENCES `student` (`studentID`),
-  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`crnNo`) REFERENCES `coursesection` (`crnNo`),
-  ADD CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`courseID`) REFERENCES `course` (`courseID`);
+  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`crnNo`) REFERENCES `coursesection` (`crnNo`);
 
 --
 -- Constraints for table `course`
