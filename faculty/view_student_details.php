@@ -156,7 +156,7 @@ $conn->close();
     <a class="btn" href="?action=holds&studentId=<?= $studentId ?>">View Holds</a>
     <a class="btn" href="?action=schedule&studentId=<?= $studentId ?>">View Semester Schedule</a>
     <a class="btn" href="?action=transcript&studentId=<?= $studentId ?>">View Transcript</a>
-    <a class="btn" href="http://localhost/faculty/Frontend/faculty_dashboard.html#advisees">Back</a>
+    <a class="btn" href="http://84.247.174.84/university/faculty/Frontend/faculty_dashboard.html#advisees">Back</a>
 
 
     <?php if ($action === 'personal_info' && isset($personalInfo)): ?>
