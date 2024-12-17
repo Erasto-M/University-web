@@ -1,201 +1,555 @@
 // Function to show and hide pages
 function showPage(pageId) {
-    const sections = document.querySelectorAll('.info-section');
+    const sections = document.querySelectorAll('.info-section'); // Select all sections
     sections.forEach(section => {
+        if (section.id === 'basic-info') {
+            // Clear dynamic content in "basic-info" section
+            section.innerHTML = '';
+        }
         section.style.display = 'none'; // Hide all sections
     });
 
     const page = document.getElementById(pageId);
     if (page) {
-        page.style.display = 'block'; // Show selected section
+        page.style.display = 'block'; // Show the selected section
     }
 
-    // Fetch data for the required pages
-    if (pageId === 'faculty-info') {
-        fetchFacultyInfo();
-    } else if (pageId === 'course-roster') {
-        fetchCourseRoster();
-    } else if (pageId === 'attendance') {
-        fetchAttendance();
-    } else if (pageId === 'assign-grades') {
-        fetchAssignGrades();
-    } else if (pageId === 'view-gradebook') {
-        fetchGradebook();
-    } else if (pageId === 'manage-schedule') {
-        fetchMasterSchedule();
-    } else if (pageId === 'view-degree-audit') {
-        fetchDegreeAudit();
-    } else if (pageId === 'update-faculty-info') {
-        fetchFacultyUpdateInfo();
+    // Fetch data only when required
+    switch (pageId) {
+        case 'basic-info':
+            fetchStudentInfo(); 
+            break;
+        case 'view-advisement':
+            fetchAdvisementData();
+            break;
+        case 'view-all-advisors':
+            fetchAllAdvisors();
+            break;
+        case 'view-all-advisors':
+            fetchAllAdvisors(); 
+            break;
+        case 'faculty-schedule':
+            fetchFacultyCourseSchedule();
+            break;
+        case 'course-roster':
+            fetchCourseRoster();
+            break;
+        case 'attendance':
+            fetchAttendance();
+            break;
+        case 'semester-schedule':
+            fetchFacultyCourseSections(); 
+            break;
+        case 'faculty-console':
+            console.log('Faculty console loaded.');
+            break;
+        case 'assign-grades':
+            fetchAssignGrades();
+            break;
+        case 'update-faculty-info':
+            fetchFacultyUpdateInfo();
+            break;
+        default:
+            console.log(`No fetch operation for pageId: ${pageId}`);
     }
 }
 
-// Function to fetch faculty personal information
-function fetchFacultyInfo() {
-    fetch('http://84.247.174.84/university/student/login.php')  // Adjusting for login.php based on logic
-        .then(response => response.json())
+
+
+// Function to fetch and display student personal information dynamically
+function fetchStudentInfo() {
+    fetch('http://84.247.174.84/university/student/get_student_info.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            document.getElementById('faculty-name').innerText = data.name;
-            document.getElementById('faculty-email').innerText = data.email;
-            document.getElementById('faculty-department').innerText = data.department;
-            document.getElementById('faculty-office-hours').innerText = data.office_hours;
+            console.log('API Response:', data);
+
+            // Dynamically create the HTML for personal information
+            const personalInfoHTML = `
+                <h3>Personal Information</h3>
+                <table>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>${data.registrationNumber || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td>${data.name || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Student Email</strong></td>
+                        <td>${data.email || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gender</strong></td>
+                        <td>${data.gender || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date of Birth</strong></td>
+                        <td>${data.dateOfBirth || 'N/A'}</td>
+                    </tr>
+                    ${data.address ? `
+                    <tr>
+                        <td><strong>Address</strong></td>
+                        <td>${data.address}</td>
+                    </tr>` : ''}
+                    ${data.streetName ? `
+                    <tr>
+                        <td><strong>Street Name</strong></td>
+                        <td>${data.streetName}</td>
+                    </tr>` : ''}
+                    ${data.city ? `
+                    <tr>
+                        <td><strong>City</strong></td>
+                        <td>${data.city}</td>
+                    </tr>` : ''}
+                    ${data.zipcode ? `
+                    <tr>
+                        <td><strong>Zip Code</strong></td>
+                        <td>${data.zipcode}</td>
+                    </tr>` : ''}
+                </table>`;
+
+            // Insert the dynamically created HTML into the 'basic-info' section
+            const basicInfoSection = document.getElementById('basic-info');
+            if (basicInfoSection) {
+                basicInfoSection.innerHTML = personalInfoHTML;
+                console.log('Personal Information successfully loaded.');
+            } else {
+                console.warn('Section with ID "basic-info" not found.');
+            }
         })
         .catch(error => {
-            alert(error.message);
-            console.log('Error fetching faculty info:', error);
+            console.error('Error fetching student info:', error);
+            alert('Unable to load student information. Please try again later.');
         });
 }
 
-// Function to fetch course roster for the faculty
+
+// Utility function to update fields safely
+function updateFieldSafely(fieldId, value) {
+    const element = document.getElementById(fieldId);
+    if (element) {
+        element.innerText = value || 'N/A';
+    } else {
+        console.warn(`Element with ID "${fieldId}" not found.`);
+    }
+}
+
+// Function to fetch and display advisement data
+function fetchAdvisementData() {
+    fetch('http://84.247.174.84/university/faculty/view_advisement.php')
+        .then(response => response.json())
+        .then(data => {
+            // Populate "Your Advisees" table
+            const adviseesTableBody = document.getElementById('advisees-table-body');
+            adviseesTableBody.innerHTML = ''; // Clear existing content
+
+            data.advisees.forEach(advisee => {
+                const row = `
+                    <tr>
+                        <td>${advisee.firstName}</td>
+                        <td>${advisee.lastName}</td>
+                        <td>${advisee.email}</td>
+                        <td>${advisee.dateOfAppointment}</td>
+                        <td>
+                            <button class="btn student-details-btn" data-student-id="${advisee.studentId || 'N/A'}">
+                                Details
+                            </button>
+                        </td>
+                    </tr>`;
+                adviseesTableBody.innerHTML += row;
+            });
+
+            // Populate "All Advisees" table
+            const allAdviseesTableBody = document.getElementById('all-advisees-table-body');
+            allAdviseesTableBody.innerHTML = ''; // Clear existing content
+
+            data.allAdvisees.forEach(advisee => {
+                const row = `
+                    <tr>
+                        <td>${advisee.firstName}</td>
+                        <td>${advisee.lastName}</td>
+                        <td>${advisee.email}</td>
+                        <td>
+                            <button class="btn student-details-btn" data-student-id="${advisee.studentId || 'N/A'}">
+                                Details
+                            </button>
+                        </td>
+                    </tr>`;
+                allAdviseesTableBody.innerHTML += row;
+            });
+
+            // Attach event listeners for buttons
+            addDetailsButtonListeners();
+            console.log('Advisement data successfully loaded.');
+        })
+        .catch(error => {
+            console.error('Error fetching advisement data:', error);
+            alert('Unable to load advisement data. Please try again later.');
+        });
+}
+
+
+// Function to attach event listeners to details buttons
+function addDetailsButtonListeners() {
+    // Select all dynamically generated "Details" buttons
+    document.querySelectorAll('.student-details-btn').forEach(button => {
+        button.addEventListener('click', event => {
+            const studentId = event.currentTarget.getAttribute('data-student-id');
+            if (!studentId || studentId === 'N/A') {
+                alert("Student ID is missing.");
+                return;
+            }
+
+            // Redirect to the details page
+            window.location.href = `http://84.247.174.84/university/faculty/view_student_details.php?studentId=${studentId}`;
+        });
+    });
+}
+
+
+// Function to fetch and display all advisors
+function fetchAllAdvisors() {
+    fetch('http://84.247.174.84/university/faculty/view_all_advisors.php') // Endpoint for fetching advisor data
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse response as JSON
+        })
+        .then(data => {
+            console.log('API Response:', data);
+
+            const allAdvisorsTableBody = document.getElementById('all-advisors-table-body');
+            if (!allAdvisorsTableBody) {
+                console.warn('Table body for all advisors not found.');
+                return;
+            }
+
+            allAdvisorsTableBody.innerHTML = ''; // Clear existing rows
+
+            // Use a Map to eliminate duplicate entries
+            const uniqueAdvisors = new Map();
+
+            data.data.forEach(advisor => {
+                if (!uniqueAdvisors.has(advisor.facultyID)) {
+                    uniqueAdvisors.set(advisor.facultyID, advisor);
+
+                    const row = `
+                        <tr>
+                            <td>${advisor.firstName}</td>
+                            <td>${advisor.lastName}</td>
+                            <td>${advisor.email}</td>
+                            <td>${advisor.specialty || 'N/A'}</td>
+                            <td>${advisor.rank}</td>
+                            <td>${advisor.facultyType}</td>
+                        </tr>`;
+                    allAdvisorsTableBody.innerHTML += row;
+                }
+            });
+
+            console.log('All advisors loaded successfully.');
+        })
+        .catch(error => {
+            console.error('Error fetching all advisors:', error);
+            alert('Unable to load advisors. Please try again later.');
+        });
+}
+
+
+// Function to fetch course roster
 function fetchCourseRoster() {
-    fetch('http://84.247.174.84/university/faculty/view_course_roster.php') // Adjusted for view_course_roster.php
+    fetch('http://84.247.174.84/university/faculty/view_course_roster.php')
         .then(response => response.json())
         .then(data => {
             const rosterTableBody = document.getElementById('course-roster-info');
-            rosterTableBody.innerHTML = ''; // Clear previous content
+            if (!rosterTableBody) return;
 
-            if (data.length > 0) {
-                data.forEach(course => {
-                    const row = `
-                        <tr>
-                            <td>${course.CourseId}</td>
-                            <td>${course.CourseName}</td>
-                            <td>${course.SectionId}</td>
-                            <td>${course.StudentCount}</td>
-                        </tr>`;
-                    rosterTableBody.innerHTML += row;
-                });
-            } else {
-                // Display message if there are no courses
-                rosterTableBody.innerHTML = '<tr><td colspan="4">No courses available for this faculty.</td></tr>';
-            }
+            rosterTableBody.innerHTML = '';
+            data.forEach(course => {
+                const row = `
+                    <tr>
+                        <td>${course.CourseId}</td>
+                        <td>${course.CourseName}</td>
+                        <td>${course.SectionId}</td>
+                        <td>${course.StudentCount}</td>
+                    </tr>`;
+                rosterTableBody.innerHTML += row;
+            });
         })
         .catch(error => {
             console.error('Error fetching course roster:', error);
+            alert('Unable to load course roster.');
         });
 }
 
-// Function to fetch attendance data
-function fetchAttendance() {
-    fetch('manage_attendance.php') // Adjusted for manage_attendance.php
+// Function to fetch and display the faculty course schedule
+function fetchFacultyCourseSchedule() {
+    fetch('http://84.247.174.84/university/admin/course_catalog.php') // Replace with actual API endpoint
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tableBody = document.querySelector('#course-schedule-table tbody');
+            tableBody.innerHTML = ''; // Clear existing table data
+
+            // Loop through each course and append a table row
+            data.forEach(course => {
+                const row = `
+                    <tr>
+                        <td>${course.CRN}</td>
+                        <td>${course.CourseName}</td>
+                        <td>${course.CourseID}</td>
+                        <td>${course.SectionNumber}</td>
+                        <td>${course.Days}</td>
+                        <td>${course.TimeSlot}</td>
+                        <td>${course.RoomNumber}</td>
+                        <td>${course.BuildingName}</td>
+                        <td>${course.Professor}</td>
+                        <td>${course.AvailableSeats}</td>
+                        <td>${course.SemesterName}</td>
+                        <td>${course.Department}</td>
+                    </tr>`;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching course schedule:', error);
+            alert('Unable to load course schedule. Please try again later.');
+        });
+}
+
+// Function to fetch and display faculty course sections
+function fetchFacultyCourseSections() {
+    fetch('http://84.247.174.84/university/faculty/view_course_sections.php') // Adjust URL as needed
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse the JSON response
+        })
+        .then(data => {
+            console.log("Course Section Data:", data); // Debugging log
+
+            // Reference the table body
+            const tableBody = document.getElementById('course-section-body');
+
+            // Clear the existing table content
+            tableBody.innerHTML = '';
+
+            // Loop through the course sections and add rows
+            data.forEach(section => {
+                const row = `
+                    <tr>
+                        <td>${section.semesterName}</td>
+                        <td>${section.semesterYear}</td>
+                        <td>${section.duration} days</td>
+                        <td>${section.startTime}</td>
+                        <td>${section.endTime}</td>
+                        <td>
+                            <button class="btn view-roster-btn" data-crn="${section.crnNo}">
+                                View Roster
+                            </button>
+                            <button class="btn view-attendance-btn" data-crn="${section.crnNo}">
+                                View Attendance
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row; // Append row to table
+            });
+
+            // Attach event listeners for "View Roster" and "View Attendance"
+            attachViewButtons();
+        })
+        .catch(error => {
+            console.error("Error fetching course sections:", error);
+            alert("Unable to load course sections. Please try again later.");
+        });
+}
+
+
+// Function to fetch and display Course Section Roster
+function fetchRoster(crnNo) {
+    fetch(`http://84.247.174.84/university/faculty/view_roster.php?crnNo=${crnNo}`)
         .then(response => response.json())
         .then(data => {
-            const attendanceTableBody = document.getElementById('attendance-info');
-            attendanceTableBody.innerHTML = ''; // Clear previous content
-
-            if (data.length > 0) {
-                data.forEach(attendance => {
-                    const row = `
+            if (data.status === "success") {
+                let tableHTML = `
+                    <h3>Course Roster</h3>
+                    <table border="1">
                         <tr>
-                            <td>${attendance.CourseName}</td>
-                            <td>${attendance.StudentName}</td>
-                            <td>${attendance.Status}</td>
-                            <td>${attendance.Date}</td>
-                        </tr>`;
-                    attendanceTableBody.innerHTML += row;
-                });
-            } else {
-                // Display message if there are no attendance records
-                attendanceTableBody.innerHTML = '<tr><td colspan="4">No attendance records found.</td></tr>';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching attendance:', error);
-        });
-}
-
-// Function to fetch grade assignment data
-function fetchAssignGrades() {
-    fetch('http://84.247.174.84/university/faculty/assign_grades.php') // Adjusted for assign_grades.php
-        .then(response => response.json())
-        .then(data => {
-            const gradebookTableBody = document.getElementById('assign-grades-info');
-            gradebookTableBody.innerHTML = ''; // Clear previous content
-
-            if (data.length > 0) {
-                data.forEach(grade => {
-                    const row = `
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Course Name</th>
+                            <th>Grade</th>
+                        </tr>
+                `;
+                data.roster.forEach(student => {
+                    tableHTML += `
                         <tr>
-                            <td>${grade.CourseName}</td>
-                            <td>${grade.StudentName}</td>
-                            <td>${grade.Grade}</td>
-                            <td>${grade.DateAssigned}</td>
-                        </tr>`;
-                    gradebookTableBody.innerHTML += row;
+                            <td>${student.userID}</td>
+                            <td>${student.studentName}</td>
+                            <td>${student.courseName}</td>
+                            <td>${student.grade}</td>
+                        </tr>
+                    `;
                 });
+                tableHTML += `</table>`;
+                document.getElementById('section-details').innerHTML = tableHTML;
             } else {
-                // Display message if no grade assignments exist
-                gradebookTableBody.innerHTML = '<tr><td colspan="4">No grade assignments found.</td></tr>';
+                alert(data.message);
             }
         })
-        .catch(error => {
-            console.error('Error fetching grade assignments:', error);
-        });
+        .catch(error => console.error("Error fetching roster:", error));
 }
 
-// Function to fetch and display the master schedule
-function fetchMasterSchedule() {
-    fetch('http://84.247.174.84/university/faculty/view_master_schedule.php')  // Adjusted for view_master_schedule.php
+// Function to fetch and display Course Section Attendance
+function fetchAttendance(crnNo) {
+    fetch(`http://84.247.174.84/university/faculty/view_attendance.php?crnNo=${crnNo}`)
         .then(response => response.json())
         .then(data => {
-            const scheduleTableBody = document.getElementById('master-schedule-info');
-            scheduleTableBody.innerHTML = ''; // Clear previous content
-
-            if (data.length > 0) {
-                data.forEach(schedule => {
-                    const row = `
+            if (data.status === "success") {
+                let tableHTML = `
+                    <h3>Course Attendance</h3>
+                    <table border="1">
                         <tr>
-                            <td>${schedule.CourseName}</td>
-                            <td>${schedule.SectionId}</td>
-                            <td>${schedule.Semester}</td>
-                            <td>${schedule.Day}</td>
-                            <td>${schedule.Time}</td>
-                        </tr>`;
-                    scheduleTableBody.innerHTML += row;
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Attended Classes</th>
+                        </tr>
+                `;
+                data.attendance.forEach(student => {
+                    tableHTML += `
+                        <tr>
+                            <td>${student.userID}</td>
+                            <td>${student.studentName}</td>
+                            <td>${student.attendedClasses}</td>
+                        </tr>
+                    `;
                 });
+                tableHTML += `</table>`;
+                document.getElementById('section-details').innerHTML = tableHTML;
             } else {
-                // Display message if no schedule records
-                scheduleTableBody.innerHTML = '<tr><td colspan="5">No schedule available.</td></tr>';
+                alert(data.message);
             }
         })
-        .catch(error => {
-            console.error('Error fetching master schedule:', error);
-        });
+        .catch(error => console.error("Error fetching attendance:", error));
 }
 
-// Function to fetch degree audit data
-function fetchDegreeAudit() {
-    fetch('http://84.247.174.84/university/faculty/view_degree_audit.php')  // Adjusted for view_degree_audit.php
+// Attach event listeners to View Roster and View Attendance buttons
+function attachViewButtons() {
+    document.querySelectorAll('.view-roster-btn').forEach(button => {
+        button.addEventListener('click', event => {
+            const crnNo = event.target.getAttribute('data-crn');
+            console.log(`View Roster for CRN: ${crnNo}`);
+            fetchRoster(crnNo); // Correct function call
+        });
+    });
+
+    document.querySelectorAll('.view-attendance-btn').forEach(button => {
+        button.addEventListener('click', event => {
+            const crnNo = event.target.getAttribute('data-crn');
+            console.log(`View Attendance for CRN: ${crnNo}`);
+            fetchAttendance(crnNo); // Correct function call
+        });
+    });
+}
+
+
+// Call fetchFacultyCourseSections when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    fetchFacultyCourseSections();
+});
+
+
+function fetchAssignGrades(crnNo) {
+    fetch(`http://84.247.174.84/university/faculty/assign_grades.php?crnNo=${crnNo}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('degree-audit-status').innerText = data.status;
-            const missingCoursesList = document.getElementById('missing-courses-list');
-            missingCoursesList.innerHTML = ''; // Clear previous content
+            if (data.status === 'success') {
+                let courseName = data.courseName;
 
-            if (data.missing_courses.length > 0) {
-                data.missing_courses.forEach(course => {
-                    missingCoursesList.innerHTML += `<li>${course}</li>`;
+                let tableHTML = `
+                    <h3>Assign Grades for ${courseName}</h3>
+                    <form id="grades-form">
+                        <table border="1" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Grade</th>
+                            </tr>
+                `;
+
+                data.roster.forEach(student => {
+                    tableHTML += `
+                        <tr>
+                            <td>${student.studentID}</td>
+                            <td>${student.studentName}</td>
+                            <td>
+                                <input type="text" name="grade[${student.studentID}]" value="${student.grade || ''}" />
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                        </table>
+                        <button type="submit">Submit Grades</button>
+                    </form>
+                `;
+
+                document.getElementById('section-details').innerHTML = tableHTML;
+
+                // Add event listener for form submission
+                document.getElementById('grades-form').addEventListener('submit', event => {
+                    event.preventDefault();
+                    submitGrades(crnNo);
                 });
             } else {
-                missingCoursesList.innerHTML = '<li>No missing courses.</li>';
+                alert(data.message);
             }
         })
-        .catch(error => {
-            console.error('Error fetching degree audit:', error);
-        });
+        .catch(error => console.error("Error fetching roster:", error));
 }
 
-// Function to fetch and display faculty update information
-function fetchFacultyUpdateInfo() {
-    fetch('http://84.247.174.84/university/faculty/update_faculty_info.php')  // Adjusted for update_faculty_info.php
+function submitGrades(crnNo) {
+    const formData = new FormData(document.getElementById('grades-form'));
+    const grades = {};
+
+    for (const [key, value] of formData.entries()) {
+        const studentID = key.match(/\[(\d+)\]/)[1];
+        grades[studentID] = value;
+    }
+
+    fetch('http://84.247.174.84/university/faculty/assign_grades.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ crnNo: crnNo, grades: grades })
+    })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('faculty-update-name').value = data.name;
-            document.getElementById('faculty-update-email').value = data.email;
-            document.getElementById('faculty-update-department').value = data.department;
-            document.getElementById('faculty-update-office-hours').value = data.office_hours;
+            if (data.status === 'success') {
+                alert('Grades updated successfully!');
+            } else {
+                alert(`Error: ${data.message}`);
+            }
         })
-        .catch(error => {
-            console.error('Error fetching faculty update information:', error);
-        });
+        .catch(error => console.error("Error submitting grades:", error));
 }
+
+// Add event listener for "Assign Grades" button
+document.querySelectorAll('.view-roster-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const crnNo = button.getAttribute('data-crn');
+        fetchAssignGrades(crnNo);
+    });
+});

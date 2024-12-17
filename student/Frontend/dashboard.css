@@ -65,6 +65,12 @@ main {
     border-collapse: collapse;
 }
 
+.table-title{
+    color:#596e59;
+    font-size: 18px;
+    font-weight:500;
+}
+
 .info-section table td {
     padding: 10px;
     border: 1px solid #ddd;
@@ -131,23 +137,18 @@ th {
     display: inline-block;
 }
 
-/* Dropdown button */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #180808;
-    min-width: 112px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-    z-index: 1;
-}
 
-.dropdown-content .btn {
-    display: block;
-    text-align: left;
-    background: none;
-    border: none;
+/* Dropdown content styling */
+.dropdown-content {
+    background-color: #222; /* Dark background for contrast */
+    color: #fff; /* White text for better visibility */
+    border: 1px solid #444; /* Subtle border to define the dropdown area */
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+    margin-top: 5px;
     padding: 10px;
-    width: 100%;
+    display: none;
+    animation: fadeIn 0.3s ease;
 }
 
 .dropdown:hover .dropdown-content {
@@ -156,8 +157,8 @@ th {
 
 /* Style for the "View" button */
 .btn {
-    background-color: #28a745; /* Green color */
-    color: white;
+    background-color: #28a748; /* Green color */
+    color: rgb(255, 253, 253);
     border: none;
     padding: 5px 10px;
     cursor: pointer;
@@ -190,6 +191,20 @@ th {
     font-size: 14px;
 }
 
+/* Dropdown content styling */
+.dropdown-content {
+    display: none; /* Ensure it is hidden initially */
+    position: absolute;
+    background-color: #f9fbfc; /* Adjust as needed */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+    padding: 10px;
+    z-index: 10;
+}
+
+
 /* Dropdown button styling */
 .btn-dropdown {
     background-color: #005a3c; /* Green shade */
@@ -207,10 +222,6 @@ th {
     align-items: center;
 }
 
-.btn-dropdown:hover {
-    background-color: #00432c; /* Darker green */
-}
-
 /* Arrow indicator for dropdown */
 .btn-dropdown .arrow {
     font-size: 18px;
@@ -220,29 +231,6 @@ th {
 
 .btn-dropdown.active .arrow {
     transform: rotate(180deg);
-}
-
-/* Dropdown content styling */
-.dropdown-content {
-    background-color: #f9fbfc;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 5px;
-    padding: 10px;
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* List items in dropdown */
@@ -255,4 +243,44 @@ th {
 .dropdown-content ul li {
     padding: 5px 0;
     font-size: 14px;
+    color: #000; /* Black text for readability */
+}
+
+/* Add hover effect for dropdown items */
+.dropdown-content ul li:hover {
+    color: #005a3c; /* Green text on hover */
+    background-color: #ccc; /* Light background for hover */
+    border-radius: 3px;
+}
+
+/* Animation for smooth dropdown appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* List items in dropdown */
+.dropdown-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content ul li {
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+#contentArea {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    min-height: 300px;
 }

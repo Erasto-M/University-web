@@ -5,40 +5,155 @@ header("Content-Type: application/json");
 include 'config.php';
 session_start();
 
-// Ensure user is logged in
-if (!isset($_SESSION['userId'])) {
-    sendResponse(401, ['message' => 'Unauthorized access. Please log in.']);
+$requestPath = $_SERVER['SCRIPT_NAME'];
+
+// Allow public access to `course_catalog.php`
+if ($requestPath === '/admin/course_catalog.php' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    fetchCourseCatalog();
+} else {
+    // Ensure user is logged in for other operations
+    if (!isset($_SESSION['userId'])) {
+        sendResponse(401, ['message' => 'Unauthorized access. Please log in.']);
+    }
+
+    // Handle operations based on the request method
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
+        switch ($_GET['action']) {
+            case 'update':
+                updateCourse();
+                break;
+            case 'updateSection':
+                updateCourseSection();
+                break;
+            case 'createSection':
+                createCourseSection();
+                break;
+            case 'deleteSection':
+                deleteCourseSection();
+                break;
+            default:
+                sendResponse(400, ['message' => 'Invalid action specified.']);
+        }
+    }
 }
 
-$sql = "SELECT c.courseID, c.courseName, c.numOfCredits, c.courseLevel, c.description, d.deptName 
-        FROM Course c
-        JOIN Department d ON c.deptID = d.deptID";
+// Function to fetch course catalog
+function fetchCourseCatalog() {
+    global $conn;
 
-$result = $conn->query($sql);
+    try {
+        $filters = [
+            'semesterID' => $_GET['semesterID'] ?? '',
+            'courseID' => $_GET['courseID'] ?? '',
+            'crnNo' => $_GET['crnNo'] ?? '',
+            'department' => $_GET['department'] ?? '',
+            'professor' => $_GET['professor'] ?? '',
+            'days' => $_GET['days'] ?? '',
+        ];
 
-$courses = [];
-while ($row = $result->fetch_assoc()) {
-    $courses[] = $row;
+        $sql = "SELECT 
+                    cs.crnNo AS CRN,
+                    c.courseName AS CourseName,
+                    c.courseID AS CourseID,
+                    cs.sectionNo AS SectionNumber,
+                    d.deptName AS Department,
+                    CONCAT(a.firstName, ' ', a.lastName) AS Professor,
+                    GROUP_CONCAT(DISTINCT dy.weekDay ORDER BY dy.dayID) AS Days,
+                    CONCAT(p.startTime, ' - ', p.endTime) AS TimeSlot,
+                    r.roomNo AS RoomNumber,
+                    b.buildingName AS BuildingName,
+                    cs.availableSeats AS AvailableSeats,
+                    sem.semesterName AS SemesterName
+                FROM 
+                    CourseSection cs
+                JOIN Course c ON cs.courseID = c.courseID
+                JOIN Department d ON c.deptID = d.deptID
+                LEFT JOIN AppUser a ON cs.facultyID = a.userID
+                LEFT JOIN TimeSlot ts ON cs.timeSlot = ts.timeSlotID
+                LEFT JOIN TimeSlotDay tsd ON ts.timeSlotID = tsd.timeSlotID
+                LEFT JOIN Day dy ON tsd.dayID = dy.dayID
+                LEFT JOIN Period p ON ts.periods = p.periodID
+                LEFT JOIN Room r ON cs.roomID = r.roomID
+                LEFT JOIN Building b ON r.buildingID = b.buildingID
+                LEFT JOIN Semester sem ON cs.semesterID = sem.semesterID
+                WHERE 1=1";
+
+        $params = [];
+        $types = '';
+
+        if ($filters['semesterID']) {
+            $sql .= " AND cs.semesterID = ?";
+            $params[] = $filters['semesterID'];
+            $types .= 'i';
+        }
+
+        if ($filters['courseID']) {
+            $sql .= " AND c.courseID = ?";
+            $params[] = $filters['courseID'];
+            $types .= 'i';
+        }
+
+
+        if ($filters['department']) {
+            $sql .= " AND d.deptName LIKE ?";
+            $params[] = "%" . $filters['department'] . "%";
+            $types .= 's';
+        }
+
+        if ($filters['professor']) {
+            $sql .= " AND CONCAT(a.firstName, ' ', a.lastName) LIKE ?";
+            $params[] = "%" . $filters['professor'] . "%";
+            $types .= 's';
+        }
+
+        if ($filters['days']) {
+            $sql .= " AND dy.weekDay LIKE ?";
+            $params[] = "%" . $filters['days'] . "%";
+            $types .= 's';
+        }
+        if ($filters['crnNo']) {
+            $sql .= " AND cs.crnNo = ?";
+            $params[] = $filters['crnNo'];
+            $types .= 'i';
+        }
+        
+        $sql .= " GROUP BY cs.crnNo";
+
+        $stmt = $conn->prepare($sql);
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $courses = [];
+        while ($row = $result->fetch_assoc()) {
+            $courses[] = $row;
+        }
+
+        sendResponse(200, $courses);
+    } catch (Exception $e) {
+        error_log("Error fetching course catalog: " . $e->getMessage());
+        sendResponse(500, ['message' => 'An error occurred while fetching the course catalog.']);
+    }
 }
 
-sendResponse(200, $courses);
 
+
+
+// Function to send response
 function sendResponse($statusCode, $data) {
-    header('Content-Type: application/json');
     http_response_code($statusCode);
     echo json_encode($data);
     exit();
 }
 
 // Update Course Information
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'update') {
-    updateCourse();
-}
 function updateCourse() {
     global $conn;
 
-    // Sanitize and collect POST data
-    $inputData = json_decode(file_get_contents('php://input'), true); // Get the raw POST data
+    $inputData = json_decode(file_get_contents('php://input'), true);
     if (isset($inputData['courseID'], $inputData['courseName'], $inputData['numOfCredits'], $inputData['courseLevel'], $inputData['description'])) {
         $courseID = $inputData['courseID'];
         $courseName = $inputData['courseName'];
@@ -50,7 +165,6 @@ function updateCourse() {
         return;
     }
 
-    // Check if the course exists before updating
     $sql_check = "SELECT * FROM Course WHERE courseID = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param('i', $courseID);
@@ -61,28 +175,27 @@ function updateCourse() {
         sendResponse(404, ['status' => 'error', 'message' => 'Course not found']);
     }
 
-    // Update the course details
     $sql = "UPDATE Course 
             SET courseName = ?, numOfCredits = ?, courseLevel = ?, description = ? 
             WHERE courseID = ?";
-
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ssssi', $courseName, $numOfCredits, $courseLevel, $description, $courseID);
 
     if ($stmt->execute()) {
         sendResponse(200, ['status' => 'success', 'message' => 'Course updated successfully']);
     } else {
-        // Log the error if update fails
         error_log("Failed to update course with ID $courseID: " . $stmt->error);
         sendResponse(500, ['status' => 'error', 'message' => 'Failed to update course']);
     }
 
     $stmt->close();
 }
+
+// Update Course Section
 function updateCourseSection() {
     global $conn;
 
-    $crnNo = $_POST['crnNo'];  // Course Section ID (CRN)
+    $crnNo = $_POST['crnNo'];
     $courseID = $_POST['courseID'];
     $sectionNo = $_POST['sectionNo'];
     $facultyID = $_POST['facultyID'];
@@ -91,7 +204,6 @@ function updateCourseSection() {
     $availableSeats = $_POST['availableSeats'];
     $semesterID = $_POST['semesterID'];
 
-    // Check if the course section exists
     $sql_check = "SELECT * FROM CourseSection WHERE crnNo = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param('i', $crnNo);
@@ -102,11 +214,9 @@ function updateCourseSection() {
         sendResponse(404, ['status' => 'error', 'message' => 'Course section not found']);
     }
 
-    // Proceed with updating if the course section exists
     $sql = "UPDATE CourseSection 
             SET courseID = ?, sectionNo = ?, facultyID = ?, timeSlot = ?, roomID = ?, availableSeats = ?, semesterID = ? 
             WHERE crnNo = ?";
-
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('iiiiiiii', $courseID, $sectionNo, $facultyID, $timeSlot, $roomID, $availableSeats, $semesterID, $crnNo);
 
@@ -119,6 +229,7 @@ function updateCourseSection() {
     $stmt->close();
 }
 
+// Create Course Section
 function createCourseSection() {
     global $conn;
 
@@ -130,7 +241,6 @@ function createCourseSection() {
     $availableSeats = $_POST['availableSeats'];
     $semesterID = $_POST['semesterID'];
 
-    // Check if the course section already exists
     $sql_check = "SELECT * FROM CourseSection WHERE courseID = ? AND sectionNo = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param('ii', $courseID, $sectionNo);
@@ -141,10 +251,8 @@ function createCourseSection() {
         sendResponse(400, ['status' => 'error', 'message' => 'Course section already exists']);
     }
 
-    // Insert the new course section
     $sql = "INSERT INTO CourseSection (courseID, sectionNo, facultyID, timeSlot, roomID, availableSeats, semesterID) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
-
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('iiiiiii', $courseID, $sectionNo, $facultyID, $timeSlot, $roomID, $availableSeats, $semesterID);
 
@@ -157,14 +265,12 @@ function createCourseSection() {
     $stmt->close();
 }
 
-
-
+// Delete Course Section
 function deleteCourseSection() {
     global $conn;
 
     $crnNo = $_POST['crnNo'];
 
-    // Check if the course section exists
     $sql_check = "SELECT * FROM CourseSection WHERE crnNo = ?";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bind_param('i', $crnNo);
@@ -175,7 +281,6 @@ function deleteCourseSection() {
         sendResponse(404, ['status' => 'error', 'message' => 'Course section not found']);
     }
 
-    // Delete the course section
     $sql = "DELETE FROM CourseSection WHERE crnNo = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $crnNo);
@@ -188,5 +293,4 @@ function deleteCourseSection() {
 
     $stmt->close();
 }
-
 ?>

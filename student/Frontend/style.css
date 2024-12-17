@@ -1,0 +1,174 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+header {
+    background-color: #368119;
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #368119;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2d6713;
+}
+
+.courseCatalog {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.search {
+    flex: 1;
+    margin-right: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.results {
+    flex: 3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+h1 {
+    font-size: 3rem;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+}
+body {
+    background: linear-gradient(135deg, #4a9c5d, #94bce7);
+}
+
+
+body {
+    background-image: url('../photos/1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+
+.logo img {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+.card {
+    background: #7dcc95;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+.card:hover {
+    transform: scale(1.1);
+}
+
+footer {
+    background-color: #7d837a;
+    color: rgb(34, 33, 33);
+    text-align: center;
+    padding: 20px;
+    margin-top: 90px;
+}
+footer .social-icons img {
+    width: 25px;
+    margin: 0 10px;
+    transition: transform 0.3s;
+}
+footer .social-icons img:hover {
+    transform: scale(1.2);
+}
+
+#contentArea {
+    background-color: white; /* Set the background to white */
+    padding: 20px;           /* Add padding for spacing */
+    border-radius: 8px;      /* Optional: Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add shadow */
+    margin-top: 20px;        /* Add space from the buttons */
+}
+
+/* Slim header */
+.slim-header {
+    background-color: #028a0f; /* Match green theme */
+    display: flex;
+    align-items: center;
+    padding: 40px 70px; /* Reduce padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header content layout */
+.header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* Logo styling */
+.logo {
+    width: 80px; /* Adjust logo size */
+    height: auto;
+    margin-right: 15px;
+}
+
+/* University name styling */
+.university-name h1 {
+    font-size: 50px; /* Reduce font size */
+    color: white;
+    margin: 0;
+}
+
+.university-name p {
+    font-size: 24px; /* Adjust subtitle size */
+    color: rgb(4, 75, 40);
+    margin: 0;
+    line-height: 1.2;
+}

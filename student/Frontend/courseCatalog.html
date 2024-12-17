@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Catalog</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .course-catalog-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn {
+            background-color: #368119;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background-color: #2d6713;
+        }
+
+        .add-btn {
+            background-color: #0056b3;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background-color: #004094;
+        }
+    </style>
+    <script src="courseCatalog.js" defer></script>
+</head>
+<body>
+    <header class="slim-header">
+        <div class="header-content">
+            <img src="logo.jpg" alt="University Logo" class="logo">
+            <div class="university-name">
+                <h1>Arthur Morgan University</h1>
+                <p>Better Life Through Technology</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">Back to Main Page</button>
+        <div class="course-catalog-container">
+            <div class="search-form">
+                <form id="searchForm">
+                    <h2>Search Courses</h2>
+                    <label for="semester">Semester:</label>
+                    <select id="semester" name="semester">
+                        <option value="">-- Loading Semesters --</option>
+                    </select>
+
+                    <label for="courseID">Course ID:</label>
+                    <input type="text" id="courseID" name="courseID">
+
+                    <label for="crn">CRN:</label>
+                    <input type="text" id="crn" name="crn">
+
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department">
+
+                    <label for="professor">Professor:</label>
+                    <input type="text" id="professor" name="professor">
+
+                    <label for="days">Days:</label>
+                    <select id="days" name="days">
+                        <option value="">-- Select Day --</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                    </select>
+
+                    <button type="button" id="filterBtn">Search</button>
+                </form>
+            </div>
+            <div id="courseResults" class="course-results">
+                <p>Search results will be displayed here.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

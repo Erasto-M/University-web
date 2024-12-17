@@ -10,12 +10,15 @@ if (!isset($_SESSION['userId'])) {
     exit();
 }
 
+// Retrieve courseID from the GET request
 $courseID = $_GET['courseID'] ?? null;
 
 if (!$courseID) {
     echo json_encode(['error' => 'Course ID is required']);
     exit();
 }
+
+// Query to fetch prerequisites for the given courseID
 $query = "
     SELECT p.prerequisiteCourseID, p.minimumGrade, c.courseName AS prerequisiteDescription
     FROM CoursePrerequisites p
@@ -23,6 +26,11 @@ $query = "
     WHERE p.courseID = ?";
 
 $stmt = $conn->prepare($query);
+if (!$stmt) {
+    echo json_encode(['error' => 'Failed to prepare the statement']);
+    exit();
+}
+
 $stmt->bind_param("i", $courseID);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -35,6 +43,9 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-
+// Return prerequisites as JSON
 echo json_encode($prerequisites);
+
+$stmt->close();
+$conn->close();
 ?>

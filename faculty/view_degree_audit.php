@@ -1,56 +1,61 @@
 <?php
-header("Access-Control-Allow-Origin: *");  // Allow all origins, or specify your React app's URL
-header("Content-Type: application/json");  // Ensure the response is in JSON format
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
-session_start();  // Start the session to access session variables
+include('db_connection.php');
+session_start();
 
-include 'db_connection.php';  // Include your database connection file
-
-// Check if user is logged in and is a faculty member
-if (!isset($_SESSION['userId']) || !isset($_SESSION['facultyFirstName']) || !isset($_SESSION['facultyLastName'])) {
-    // Redirect to login page if not logged in
-    header('Location: ./login.html');
+if (!isset($_SESSION['userId'])) {
+    echo json_encode(['error' => 'User not logged in']);
     exit();
 }
 
-// Get studentId from GET request
-if (isset($_GET['studentId'])) {
-    $studentId = $_GET['studentId'];
+$userId = $_SESSION['userId'];
 
-    // Prepare the SQL query to fetch the degree audit for the specific student
-    $sql = "SELECT s.FirstName, s.LastName, da.DegreeAuditId, da.AuditDetails
-            FROM Student s
-            JOIN DegreeAudit da ON s.StudentId = da.StudentId
-            WHERE s.StudentId = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $studentId);
-    $stmt->execute();
-    $result = $stmt->get_result();
+// Query for Degree Audit including detailed information
+$query = "
+    SELECT 
+        c.courseID,
+        c.courseName,
+        CASE
+            WHEN mr.majorID IS NOT NULL THEN 'Major'
+            WHEN mnr.minorID IS NOT NULL THEN 'Minor'
+        END AS courseType,
+        mr.minimumGradeRequired AS majorGradeRequired,
+        mnr.minimumGradeRequired AS minorGradeRequired,
+        sh.grade AS earnedGrade,
+        sh.semesterID,
+        sem.semesterName,
+        sem.semesterYear,
+        cs.crnNo,
+        CONCAT(f.firstName, ' ', f.lastName) AS professorName,
+        CASE
+            WHEN sh.grade IS NULL THEN 'In Progress'
+            WHEN sh.grade < mr.minimumGradeRequired THEN 'Retaken'
+            ELSE 'Completed'
+        END AS courseStatus
+    FROM Course c
+    LEFT JOIN MajorRequirements mr ON c.courseID = mr.courseID
+    LEFT JOIN MinorRequirements mnr ON c.courseID = mnr.courseID
+    LEFT JOIN StudentHistory sh ON c.courseID = sh.courseID AND sh.studentID = ?
+    LEFT JOIN Semester sem ON sh.semesterID = sem.semesterID
+    LEFT JOIN CourseSection cs ON c.courseID = cs.courseID
+    LEFT JOIN AppUser f ON cs.facultyID = f.userID
+    WHERE (mr.majorID IN (SELECT majorID FROM StudentMajor WHERE studentID = ?) OR
+           mnr.minorID IN (SELECT minorID FROM StudentMinor WHERE studentID = ?))
+";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("iii", $userId, $userId, $userId);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    // Check if the degree audit exists
-    if ($result->num_rows > 0) {
-        $degreeAudit = $result->fetch_assoc();
-
-        // Return degree audit data in JSON format
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Degree audit fetched successfully.',
-            'data' => $degreeAudit
-        ]);
-    } else {
-        // No degree audit found for this student
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'No degree audit found for this student.'
-        ]);
-    }
-} else {
-    // Missing studentId in the GET request
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Student ID is required.'
-    ]);
+$degreeAudit = [];
+while ($row = $result->fetch_assoc()) {
+    $degreeAudit[] = $row;
 }
 
-exit();
+echo json_encode($degreeAudit);
+
+$stmt->close();
+$conn->close();
 ?>
